@@ -6,7 +6,19 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ## Current Progress
 
-![Raytraced Sphere](CurrentProgress/current_progress.png)
+![Raytraced Sphere](readmeImages/current_progress.png)
+
+---
+
+## Raytracing Algo
+
+- Ray tracing begins with a **scene**.
+- A scene consists of a **camera**, a **viewport**, and a **3D world**.
+- Think of the **camera** as an eye and the **viewport** as a screen with small square openings. Each opening corresponds to a pixel on the canvas.
+- For every square (or pixel) on the viewport, a **ray is cast** from the camera through it into the 3D world.
+- If the ray intersects a 3D object, the corresponding pixel on the canvas is painted with the color of that object at the point of intersection.
+
+![Raytracing Visualization](readmeImages/raytracing_algo.png)
 
 ---
 
