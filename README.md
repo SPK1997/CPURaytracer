@@ -1,20 +1,26 @@
-# 🧠 CPU Raytracer
+# CPU Raytracer
 
-A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering directly to an HTML5 `<canvas>` element without WebGL or external libraries.
+A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering directly to an HTML5 `<canvas>` element — no WebGL, no external libraries.
 
 ---
 
-## 📁 Project Structure
+## Current Progress
 
-### 🔹 `CPURaytracer/EventsManager.js`
+![Raytraced Sphere](CurrentProgress/current_progress.png)
 
-Handles adding and removing **event listeners** to the DOM.
+---
 
-### 🔹 `CPURaytracer/CanvasManager.js`
+## Project Structure
 
-Responsible for creating, updating, and destroying the **canvas element** used for rendering.
+### CPURaytracer/EventsManager.js
 
-### 🔹 `CPURaytracer/RaytracingManager.js`
+Handles adding and removing event listeners to the DOM.
+
+### CPURaytracer/CanvasManager.js
+
+Responsible for creating, updating, and destroying the canvas element used for rendering.
+
+### CPURaytracer/RaytracingManager.js
 
 Core ray tracing logic:
 
@@ -22,9 +28,9 @@ Core ray tracing logic:
 - Computes intersections
 - Handles rendering flow
 
-### 🔹 `CPURaytracer/mathServices.js`
+### CPURaytracer/mathServices.js
 
-Contains **vector algebra and geometry utilities** used by the ray tracer, such as:
+Contains vector algebra and geometry utilities used by the ray tracer, such as:
 
 - Vector operations
 - Dot product, subtraction, normalization
@@ -32,17 +38,17 @@ Contains **vector algebra and geometry utilities** used by the ray tracer, such 
 
 ---
 
-## 🧱 Entry Point Files
+## Entry Point Files
 
-### 🔸 `index.html`
+### index.html
 
 The main HTML file that bootstraps the app and mounts the canvas.
 
-### 🔸 `index.css`
+### index.css
 
 Styling for the web interface.
 
-### 🔸 `index.js`
+### index.js
 
 Main JavaScript entry point:
 
@@ -52,26 +58,26 @@ Main JavaScript entry point:
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 To run the raytracer locally:
 
 1. Clone this repository
 2. Open `index.html` in any modern browser
-3. Watch the magic of pixel-by-pixel ray tracing
+3. Watch the pixel-by-pixel ray tracing in action
 
 ---
 
-## 📌 Notes
+## Notes
 
-- This raytracer runs entirely on the **CPU** using `CanvasRenderingContext2D`
-- No WebGL, no Three.js, no shaders
+- This raytracer runs entirely on the CPU using `CanvasRenderingContext2D`
+- No WebGL, no Three.js, no shaders — just math and canvas
 
 ---
 
-## ✅ planned work
+## Planned Work
 
-- Add lighting
-- Support multiple object types (planes, boxes)
+- Add lighting (diffuse, specular)
+- Support multiple object types (planes, boxes, etc.)
 - Build a lightweight raytracer NPM package
-- Port math to WebAssembly for speed-up
+- Port math engine to WebAssembly for performance
