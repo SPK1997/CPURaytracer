@@ -24,6 +24,23 @@ let shapeData = [
     color: { r: 0, g: 255, b: 0 },
   },
 ];
+let lightData = [
+  {
+    type: "ambient",
+    intensity: 0.2,
+  },
+
+  {
+    type: "point",
+    intensity: 0.6,
+    position: { x: 2, y: 1, z: 0 },
+  },
+  {
+    type: "directional",
+    intensity: 0.2,
+    direction: { x: 1, y: 4, z: 4 },
+  },
+];
 
 let cm = new CanvasManager({
   target: document.getElementById("root"),
@@ -41,6 +58,7 @@ let rm = new RaytracingManager({
   cameraPosition: cameraPosition,
   distanceFromCameraToViewport: distanceFromCameraToViewport,
   shapeData: shapeData,
+  lightData: lightData,
   putPixelCallback: (x, y, color) => {
     cm.putPixel({
       x: x,

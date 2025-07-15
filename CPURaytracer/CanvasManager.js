@@ -50,7 +50,7 @@ class CanvasManager {
     this.#imageData.data[index] = r; // R
     this.#imageData.data[index + 1] = g; // G
     this.#imageData.data[index + 2] = b; // B
-    this.#imageData.data[index + 3] = 255; // A (fully opaque)
+    this.#imageData.data[index + 3] = 255; // A (opacity)
   }
 
   clearCanvas() {

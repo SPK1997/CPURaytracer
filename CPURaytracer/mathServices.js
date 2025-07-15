@@ -15,6 +15,18 @@ export default {
       z: v.z * k,
     };
   },
+  magnitudeOfVector(v) {
+    return Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2);
+  },
+
+  normalizeVector(v) {
+    let k = this.magnitudeOfVector(v);
+    if (k === 0) {
+      return v;
+    }
+    return this.scaleVector(v, 1 / k);
+  },
+
   quadraticEquationRoots(a, b, c) {
     let d = b ** 2 - 4 * a * c;
     if (d < 0) {

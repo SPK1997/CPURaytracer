@@ -22,6 +22,47 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ---
 
+## Lighting Model
+
+### Types of Light Sources
+
+**Based on origin:**
+
+- **Emissive Light**: Light emitted directly from a source (e.g., bulb, sun).
+- **Scattered Light**: Light reflected off surfaces. Acts as a secondary source.
+
+**Based on mathematical modeling:**
+
+- **Point Light**: Light originates from a single point. Each surface point has a different light vector (e.g., a bulb).
+- **Directional Light**: Light comes from a far-away source. All surface points share the same direction vector (e.g., sunlight).
+- **Ambient Light**: A constant, low-intensity light representing indirect scattering from the environment.
+
+### Surface Types
+
+- **Matte Surface**: Reflects light equally in all directions (diffuse reflection).
+- **Shiny Surface**: Reflects light in a specific direction (specular reflection).
+
+### Diffuse Reflection Calculation
+
+![Diffuse Reflection Visualization](readmeImages/diffuse_light_calc.png)
+
+To compute how a matte surface reflects light:
+
+- **I**: Light intensity (thickness of the light beam)
+- **A**: Surface area over which the light spreads
+- **L**: Light vector (from point to light source)
+- **N**: Surface normal at the point
+- **a**: Angle between L and N
+
+**Reflected Intensity = Light Intensity × cos(α)**
+
+- When a → 0 degrees, cos(a) → 1 (maximum reflection)
+- When a → 90 degrees, cos(a) → 0 (no reflection)
+
+This models how light spreads over a larger area at shallow angles, thus reducing its intensity.
+
+---
+
 ## Project Structure
 
 ### CPURaytracer/EventsManager.js
@@ -89,7 +130,7 @@ To run the raytracer locally:
 
 ## Planned Work
 
-- Add lighting (diffuse, specular)
+- Add lighting (specular)
 - Support multiple object types (planes, boxes, etc.)
 - Build a lightweight raytracer NPM package
 - Port math engine to WebAssembly for performance
