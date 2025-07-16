@@ -54,10 +54,16 @@ To compute how a matte surface reflects light:
 - **N**: Surface normal at the point
 - **a**: Angle between L and N
 
-**Reflected Intensity = Light Intensity × cos(α)**
+**Reflected Intensity = Light Intensity x (I/A) = Light Intensity × cos(a)**
 
-- When a → 0 degrees, cos(a) → 1 (maximum reflection)
-- When a → 90 degrees, cos(a) → 0 (no reflection)
+- When a approaches 0 degrees, the ratio I/A approaches 1 (maximum reflection)
+- When a approaches 90 degrees, A approaches infinity, the ratio I/A approaches 0 (no reflection)
+
+To compute how I/A is same as cos(a) from the diagram:
+
+- angle SPR = a + b = 90 degrees
+- angle SRP = 90 degrees - b = a
+- cosine(a) = RZ/RP = (I/2) / (A/2) = I/A
 
 This models how light spreads over a larger area at shallow angles, thus reducing its intensity.
 
