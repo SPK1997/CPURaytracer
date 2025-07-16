@@ -77,6 +77,38 @@ Therefore, when no lights are present, it will be pitch black as shown in below 
 
 [![Watch Diffuse Reflection demo](readmeImages/Diffuse_Lighting_demo.png)](https://www.youtube.com/watch?v=PY25eGugKfM)
 
+### Specular Reflection Calculation
+
+![Specular Reflection Visualization](readmeImages/specular_light_calc.png)
+
+To compute how a **shiny surface** reflects light:
+
+- **L** — Light vector (from the point on the surface to the light source)
+- **N** — Surface normal at that point
+- **R** — Perfectly reflected light vector
+- **Vi** — View vectors (e.g., **V1, V2, V3, V4**) from the point toward the camera
+- **α (a)** — Angle between the reflected light vector (**R**) and a view vector (e.g., **V3**)
+
+No surface is perfectly smooth — meaning light isn't only reflected in the exact direction of **R**, but also slightly around it. This gives rise to **specular highlights**, which appear brighter when:
+
+- The view direction is aligned with the reflected light
+- The surface is highly polished or shiny
+
+We calculate the reflected light intensity as follows:
+
+**Reflected Intensity = Light Intensity × (cos(a))^specular**
+
+- The `specular` exponent determines how shiny the surface is.
+- **Higher values** produce smaller, sharper highlights.
+- **Lower values** produce broader, softer highlights.
+- This is because higher specular value makes the cosine curve narrower. Check the image below for **cos(a)^b**
+
+![Cosine Curve](readmeImages/cosine_curve.png)
+
+When **a = 0 degrees** (perfect alignment), the intensity is **maximum**.  
+As **a increases toward 90 degrees**, intensity **drops rapidly**.  
+Raising **cos(a)** to a high power compresses the reflection into a narrow beam — simulating a shiny surface.
+
 ---
 
 ## Project Structure
@@ -146,7 +178,7 @@ To run the raytracer locally:
 
 ## Planned Work
 
-- Add lighting (specular)
+- Add shadows
 - Support multiple object types (planes, boxes, etc.)
 - Build a lightweight raytracer NPM package
 - Port math engine to WebAssembly for performance

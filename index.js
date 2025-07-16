@@ -12,16 +12,24 @@ let shapeData = [
     center: { x: 0, y: -1, z: 3 },
     radius: 1,
     color: { r: 255, g: 0, b: 0 },
+    specular: 500,
   },
   {
     center: { x: 2, y: 0, z: 4 },
     radius: 1,
     color: { r: 0, g: 0, b: 255 },
+    specular: 1000,
   },
   {
     center: { x: -2, y: 0, z: 4 },
     radius: 1,
     color: { r: 0, g: 255, b: 0 },
+    specular: 10,
+  },
+  {
+    center: { x: 0, y: 2, z: 10 },
+    radius: 2,
+    color: { r: 0, g: 255, b: 255 },
   },
 ];
 let lightData = [

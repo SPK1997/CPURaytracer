@@ -1,33 +1,41 @@
 import mathServices from "./mathServices.js";
 
 class RaytracingManager {
-  constructor({
-    viewportHeight,
-    viewportWidth,
-    canvasHeight,
-    canvasWidth,
-    distanceFromCameraToViewport,
-    cameraPosition,
-    shapeData,
-    putPixelCallback,
-    onCompleteCallback,
-    lightData,
-    noIntersectionColor,
-  }) {
-    this.viewportHeight = viewportHeight;
-    this.viewportWidth = viewportWidth;
-    this.canvasHeight = canvasHeight;
-    this.canvasWidth = canvasWidth;
-    this.distanceFromCameraToViewport = distanceFromCameraToViewport;
-    this.cameraPosition = cameraPosition;
-    this.shapeData = shapeData;
-    this.putPixelCallback = putPixelCallback;
-    this.onCompleteCallback = onCompleteCallback;
-    this.lightData = lightData;
-    this.noIntersectionColor = noIntersectionColor;
+  constructor(props) {
+    this.viewportHeight = props.viewportHeight;
+    this.viewportWidth = props.viewportWidth;
+    this.canvasHeight = props.canvasHeight;
+    this.canvasWidth = props.canvasWidth;
+    this.distanceFromCameraToViewport = props.distanceFromCameraToViewport;
+    this.cameraPosition = props.cameraPosition;
+    this.putPixelCallback =
+      props.putPixelCallback ||
+      function () {
+        console.warn("putPixelCallback is missing in RaytracingManager");
+      };
+    this.onCompleteCallback =
+      props.onCompleteCallback ||
+      function () {
+        console.warn("onCompleteCallback is missing in RaytracingManager");
+      };
+    this.shapeData =
+      props.shapeData && props.shapeData.length ? props.shapeData : [];
+    this.lightData =
+      props.lightData && props.lightData.length ? props.lightData : [];
+    this.noIntersectionColor = props.noIntersectionColor || {
+      r: 0,
+      g: 0,
+      b: 0,
+    };
   }
 
-  #calculateLighting(color, intersectionPoint, normalToShapeSurface) {
+  #calculateLighting({
+    color,
+    intersectionPoint,
+    normalToShapeSurface,
+    reverseDirectionVector,
+    specular,
+  }) {
     if (!intersectionPoint) {
       return color;
     }
@@ -49,14 +57,40 @@ class RaytracingManager {
           lightVector,
           normalToShapeSurface
         );
-        let magnitudeOfLightVector =
-          mathServices.magnitudeOfVector(lightVector);
-        let magnitudeOfNormalVector =
-          mathServices.magnitudeOfVector(normalToShapeSurface);
-        intensity +=
-          light.intensity *
-          (dotProductOfNormalAndLightVector /
-            (magnitudeOfLightVector * magnitudeOfNormalVector));
+        if (dotProductOfNormalAndLightVector > 0) {
+          let magnitudeOfLightVector =
+            mathServices.magnitudeOfVector(lightVector);
+          let magnitudeOfNormalVector =
+            mathServices.magnitudeOfVector(normalToShapeSurface);
+          intensity +=
+            light.intensity *
+            (dotProductOfNormalAndLightVector /
+              (magnitudeOfLightVector * magnitudeOfNormalVector));
+        }
+
+        if (specular !== -1) {
+          let reflectedRayVector = mathServices.subtractVectors(
+            mathServices.scaleVector(
+              mathServices.scaleVector(normalToShapeSurface, 2),
+              mathServices.dotProduct(normalToShapeSurface, lightVector)
+            ),
+            lightVector
+          );
+          let dotProductOfReflectedRayVectorAndReverseDirectionVector =
+            mathServices.dotProduct(reflectedRayVector, reverseDirectionVector);
+          if (dotProductOfReflectedRayVectorAndReverseDirectionVector > 0) {
+            let magnitudeOfReflectedRayVector =
+              mathServices.magnitudeOfVector(reflectedRayVector);
+            let magnitudeOfReverseDirectionVector =
+              mathServices.magnitudeOfVector(reverseDirectionVector);
+            intensity +=
+              light.intensity *
+              (dotProductOfReflectedRayVectorAndReverseDirectionVector /
+                (magnitudeOfReflectedRayVector *
+                  magnitudeOfReverseDirectionVector)) **
+                specular;
+          }
+        }
       }
     }
     return {
@@ -92,6 +126,7 @@ class RaytracingManager {
         color: this.noIntersectionColor,
         intersectionPoint: null,
         normalToShapeSurface: null,
+        specular: -1,
       };
     }
     let intersectionPoint = mathServices.addVectors(
@@ -106,6 +141,7 @@ class RaytracingManager {
       color: closestShapeColor,
       intersectionPoint: intersectionPoint,
       normalToShapeSurface: normalToShapeSurface,
+      specular: closestShape.specular ?? -1,
     };
   }
 
@@ -142,22 +178,28 @@ class RaytracingManager {
     let ratioH = this.viewportHeight / this.canvasHeight;
     for (let i = startX; i <= endX; i++) {
       for (let j = startY; j <= endY; j++) {
-        let { color, intersectionPoint, normalToShapeSurface } = this.#traceRay(
-          {
+        let directionVector = this.#calculateDirectionVector({
+          x: i * ratioW,
+          y: j * ratioH,
+          z: this.distanceFromCameraToViewport,
+        });
+        let { color, intersectionPoint, normalToShapeSurface, specular } =
+          this.#traceRay({
             tMin: 1,
             tMax: Number.POSITIVE_INFINITY,
-            directionVector: this.#calculateDirectionVector({
-              x: i * ratioW,
-              y: j * ratioH,
-              z: this.distanceFromCameraToViewport,
-            }),
-          }
+            directionVector: directionVector,
+          });
+        let reverseDirectionVector = mathServices.subtractVectors(
+          { x: 0, y: 0, z: 0 },
+          directionVector
         );
-        let colorWithIntensityAdjusted = this.#calculateLighting(
+        let colorWithIntensityAdjusted = this.#calculateLighting({
           color,
           intersectionPoint,
-          normalToShapeSurface
-        );
+          normalToShapeSurface,
+          reverseDirectionVector,
+          specular,
+        });
         this.putPixelCallback(i, j, colorWithIntensityAdjusted);
       }
     }
