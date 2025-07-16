@@ -67,16 +67,6 @@ To compute how I/A is same as cos(a) from the diagram:
 
 This models how light spreads over a larger area at shallow angles, thus reducing its intensity.
 
-During ray tracing, if the ray vector does not intersect with anything, then `{ r: 0, g: 0, b: 0 }` is returned.
-
-If the ray intersects with something, then depending on the intensity of light reflected by the surface, its color is modified like:
-
-`{ r: valueR * ReflectedLightIntensity, g: valueG * ReflectedLightIntensity, b: valueB * ReflectedLightIntensity }`
-
-Therefore, when no lights are present, it will be pitch black as shown in below video:
-
-[![Watch Diffuse Reflection demo](readmeImages/Diffuse_Lighting_demo.png)](https://www.youtube.com/watch?v=PY25eGugKfM)
-
 ### Specular Reflection Calculation
 
 ![Specular Reflection Visualization](readmeImages/specular_light_calc.png)
@@ -87,7 +77,7 @@ To compute how a **shiny surface** reflects light:
 - **N** — Surface normal at that point
 - **R** — Perfectly reflected light vector
 - **Vi** — View vectors (e.g., **V1, V2, V3, V4**) from the point toward the camera
-- **α (a)** — Angle between the reflected light vector (**R**) and a view vector (e.g., **V3**)
+- **a** — Angle between the reflected light vector (**R**) and a view vector (e.g., **V3**)
 
 No surface is perfectly smooth — meaning light isn't only reflected in the exact direction of **R**, but also slightly around it. This gives rise to **specular highlights**, which appear brighter when:
 
@@ -108,6 +98,18 @@ We calculate the reflected light intensity as follows:
 When **a = 0 degrees** (perfect alignment), the intensity is **maximum**.  
 As **a increases toward 90 degrees**, intensity **drops rapidly**.  
 Raising **cos(a)** to a high power compresses the reflection into a narrow beam — simulating a shiny surface.
+
+### Working of Raytracing and Light
+
+During ray tracing, if the ray vector does not intersect with anything, then `{ r: 0, g: 0, b: 0 }` is returned.
+
+If the ray intersects with something, then depending on the intensity of light reflected by the surface, its color is modified like:
+
+`{ r: valueR * ReflectedLightIntensity, g: valueG * ReflectedLightIntensity, b: valueB * ReflectedLightIntensity }`
+
+Therefore, when no lights are present, it will be pitch black as shown in below video:
+
+[![Watch Diffuse Reflection demo](readmeImages/Diffuse_Lighting_demo.png)](https://www.youtube.com/watch?v=PY25eGugKfM)
 
 ---
 
