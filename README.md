@@ -44,8 +44,6 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ### Diffuse Reflection Calculation
 
-[![Watch Diffuse Reflection demo](readmeImages/current_progress.png)](https://www.youtube.com/watch?v=PY25eGugKfM)
-
 ![Diffuse Reflection Visualization](readmeImages/diffuse_light_calc.png)
 
 To compute how a matte surface reflects light:
@@ -68,6 +66,16 @@ To compute how I/A is same as cos(a) from the diagram:
 - cosine(a) = RZ/RP = (I/2) / (A/2) = I/A
 
 This models how light spreads over a larger area at shallow angles, thus reducing its intensity.
+
+During ray tracing, if the ray vector does not intersect with anything, then `{ r: 0, g: 0, b: 0 }` is returned.
+
+If the ray intersects with something, then depending on the intensity of light reflected by the surface, its color is modified like:
+
+`{ r: valueR * LightIntensity, g: valueG * LightIntensity, b: valueB * LightIntensity }`
+
+Therefore, when no lights are present, it will be pitch black as shown in below video:
+
+[![Watch Diffuse Reflection demo](readmeImages/Diffuse_Lighting_demo.png)](https://www.youtube.com/watch?v=PY25eGugKfM)
 
 ---
 
