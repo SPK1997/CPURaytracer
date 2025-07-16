@@ -44,6 +44,8 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ### Diffuse Reflection Calculation
 
+[![Watch Diffuse Reflection demo](readmeImages/current_progress.png)](https://www.youtube.com/watch?v=PY25eGugKfM)
+
 ![Diffuse Reflection Visualization](readmeImages/diffuse_light_calc.png)
 
 To compute how a matte surface reflects light:
