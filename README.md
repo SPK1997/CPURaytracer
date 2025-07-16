@@ -71,7 +71,7 @@ During ray tracing, if the ray vector does not intersect with anything, then `{ 
 
 If the ray intersects with something, then depending on the intensity of light reflected by the surface, its color is modified like:
 
-`{ r: valueR * LightIntensity, g: valueG * LightIntensity, b: valueB * LightIntensity }`
+`{ r: valueR * ReflectedLightIntensity, g: valueG * ReflectedLightIntensity, b: valueB * ReflectedLightIntensity }`
 
 Therefore, when no lights are present, it will be pitch black as shown in below video:
 
