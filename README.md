@@ -62,7 +62,7 @@ To compute how a matte surface reflects light:
 To compute how I/A is same as cos(a) from the diagram:
 
 - angle SPR = a + b = 90 degrees
-- angle SRP = 90 degrees - b = a
+- angle ZRP = 90 degrees - b = a
 - cosine(a) = RZ/RP = (I/2) / (A/2) = I/A
 
 This models how light spreads over a larger area at shallow angles, thus reducing its intensity.
