@@ -2,13 +2,12 @@ class CanvasManager {
   #ctx;
   #canvas;
   #imageData;
-  constructor({ target, height, width, bgColor }) {
+  constructor({ target, height, width }) {
     this.#canvas = null;
     this.#ctx = null;
     this.height = height;
     this.width = width;
     this.target = target;
-    this.bgColor = bgColor;
     this.#imageData = null;
   }
 
@@ -21,10 +20,6 @@ class CanvasManager {
     this.target = target;
   }
 
-  changeBgColor(bgColor) {
-    this.bgColor = bgColor;
-  }
-
   showCanvas() {
     this.#canvas = document.createElement("canvas");
     this.#ctx = this.#canvas.getContext("2d");
@@ -34,9 +29,6 @@ class CanvasManager {
     this.#canvas.style.height = this.height + "px";
     this.#canvas.style.width = this.width + "px";
     this.#imageData = this.#ctx.getImageData(0, 0, this.width, this.height);
-    this.#canvas.style.backgroundColor = this.#getCSSColorStringInRGBFormat(
-      this.bgColor
-    );
   }
 
   render() {

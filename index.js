@@ -29,7 +29,6 @@ let lightData = [
     type: "ambient",
     intensity: 0.2,
   },
-
   {
     type: "point",
     intensity: 0.6,
@@ -46,7 +45,6 @@ let cm = new CanvasManager({
   target: document.getElementById("root"),
   height: canvasHeight,
   width: canvasWidth,
-  bgColor: { r: 255, g: 255, b: 255 },
 });
 cm.showCanvas();
 
@@ -59,6 +57,7 @@ let rm = new RaytracingManager({
   distanceFromCameraToViewport: distanceFromCameraToViewport,
   shapeData: shapeData,
   lightData: lightData,
+  noIntersectionColor: { r: 0, g: 0, b: 0 },
   putPixelCallback: (x, y, color) => {
     cm.putPixel({
       x: x,

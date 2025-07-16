@@ -12,6 +12,7 @@ class RaytracingManager {
     putPixelCallback,
     onCompleteCallback,
     lightData,
+    noIntersectionColor,
   }) {
     this.viewportHeight = viewportHeight;
     this.viewportWidth = viewportWidth;
@@ -23,6 +24,7 @@ class RaytracingManager {
     this.putPixelCallback = putPixelCallback;
     this.onCompleteCallback = onCompleteCallback;
     this.lightData = lightData;
+    this.noIntersectionColor = noIntersectionColor;
   }
 
   #calculateLighting(color, intersectionPoint, normalToShapeSurface) {
@@ -87,7 +89,7 @@ class RaytracingManager {
     }
     if (closestShape === null) {
       return {
-        color: { r: 255, g: 255, b: 255 },
+        color: this.noIntersectionColor,
         intersectionPoint: null,
         normalToShapeSurface: null,
       };
