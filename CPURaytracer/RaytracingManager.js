@@ -39,7 +39,9 @@ class RaytracingManager {
     if (!intersectionPoint) {
       return color;
     }
-    let intensity = 0.0;
+    let intensity = 0.0,
+      tMax,
+      tMin = 0.001;
     for (let light of this.lightData) {
       if (light.type === "ambient") {
         intensity += light.intensity;
@@ -50,8 +52,19 @@ class RaytracingManager {
             light.position,
             intersectionPoint
           );
+          tMax = 1;
         } else if (light.type === "directional") {
           lightVector = light.direction;
+          tMax = Number.POSITIVE_INFINITY;
+        }
+        let { closestShape: lightBlockingShape } = this.#closestIntersection({
+          tMin: tMin,
+          tMax: tMax,
+          originVector: intersectionPoint,
+          directionVector: lightVector,
+        });
+        if (lightBlockingShape !== null) {
+          continue;
         }
         let dotProductOfNormalAndLightVector = mathServices.dotProduct(
           lightVector,
@@ -104,11 +117,12 @@ class RaytracingManager {
     return mathServices.subtractVectors(viewportPosition, this.cameraPosition);
   }
 
-  #traceRay({ tMin, tMax, directionVector }) {
+  #closestIntersection({ tMin, tMax, originVector, directionVector }) {
     let closestT = Number.POSITIVE_INFINITY;
     let closestShape = null;
     for (let shape of this.shapeData) {
       let { t1, t2 } = this.#intersectRayWithSphere({
+        originVector: originVector,
         directionVector: directionVector,
         shape: shape,
       });
@@ -121,6 +135,16 @@ class RaytracingManager {
         closestShape = shape;
       }
     }
+    return { closestT: closestT, closestShape: closestShape };
+  }
+
+  #traceRay({ tMin, tMax, originVector, directionVector }) {
+    let { closestShape, closestT } = this.#closestIntersection({
+      tMin,
+      tMax,
+      originVector,
+      directionVector,
+    });
     if (closestShape === null) {
       return {
         color: this.noIntersectionColor,
@@ -145,17 +169,17 @@ class RaytracingManager {
     };
   }
 
-  #intersectRayWithSphere({ directionVector, shape }) {
+  #intersectRayWithSphere({ directionVector, originVector, shape }) {
     let radius = shape.radius;
-    let centerToCameraVector = mathServices.subtractVectors(
-      this.cameraPosition,
+    let centerToOriginVector = mathServices.subtractVectors(
+      originVector,
       shape.center
     );
 
     let a = mathServices.dotProduct(directionVector, directionVector);
-    let b = 2 * mathServices.dotProduct(centerToCameraVector, directionVector);
+    let b = 2 * mathServices.dotProduct(centerToOriginVector, directionVector);
     let c =
-      mathServices.dotProduct(centerToCameraVector, centerToCameraVector) -
+      mathServices.dotProduct(centerToOriginVector, centerToOriginVector) -
       radius ** 2;
 
     let { t1, t2 } = mathServices.quadraticEquationRoots(a, b, c);
@@ -187,6 +211,7 @@ class RaytracingManager {
           this.#traceRay({
             tMin: 1,
             tMax: Number.POSITIVE_INFINITY,
+            originVector: this.cameraPosition,
             directionVector: directionVector,
           });
         let reverseDirectionVector = mathServices.subtractVectors(

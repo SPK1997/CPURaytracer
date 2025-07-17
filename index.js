@@ -65,7 +65,7 @@ let rm = new RaytracingManager({
   distanceFromCameraToViewport: distanceFromCameraToViewport,
   shapeData: shapeData,
   lightData: lightData,
-  noIntersectionColor: { r: 0, g: 0, b: 0 },
+  noIntersectionColor: { r: 255, g: 255, b: 255 },
   putPixelCallback: (x, y, color) => {
     cm.putPixel({
       x: x,
