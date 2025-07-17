@@ -122,6 +122,8 @@ Therefore, when no lights are present, it will be pitch black as shown in below 
 - If this shadow ray intersects any other object before reaching the light, it means the light is blocked, and point P lies in shadow.
 - If no object obstructs the shadow ray, then the light reaches point P, and we proceed with lighting calculations (diffuse, specular)
 
+---
+
 ## Project Structure
 
 ### CPURaytracer/EventsManager.js
