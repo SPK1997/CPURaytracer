@@ -22,7 +22,7 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ---
 
-## Lighting Model
+## Modelling Lighting
 
 ### Types of Light Sources
 
@@ -112,6 +112,15 @@ Therefore, when no lights are present, it will be pitch black as shown in below 
 [![Watch Diffuse Reflection demo](readmeImages/Diffuse_Lighting_demo.png)](https://www.youtube.com/watch?v=PY25eGugKfM)
 
 ---
+
+## Modelling Shadows
+
+- In raytracing we cast a ray from camera and find its intersection with an object.
+- From the point of intersection (P) towards the light source we have a vector called the light vector (L) which we saw earlier in lights modelling section.
+- We form a new ray vector of the form P + t\*L where t is a positive number and can vary, P and L are 3D vectors.
+- This ray starts at the intersection point and travels in the direction of the light source.
+- If this shadow ray intersects any other object before reaching the light, it means the light is blocked, and point P lies in shadow.
+- If no object obstructs the shadow ray, then the light reaches point P, and we proceed with lighting calculations (diffuse, specular)
 
 ## Project Structure
 
