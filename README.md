@@ -205,5 +205,6 @@ To run the raytracer locally:
 ## Planned Work
 
 - Improve structure and performance of code
+- Documentation Website
 - Build a lightweight raytracer NPM package
 - Port math engine to WebAssembly for performance
