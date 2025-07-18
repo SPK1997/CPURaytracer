@@ -43,7 +43,6 @@ export default {
       [Math.sin(angle), 0, Math.cos(angle)],
     ];
     let output = this.transformVector(v, matrix);
-    console.log(output);
     return output;
   },
 

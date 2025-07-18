@@ -1,5 +1,3 @@
-import mathServices from "./mathServices.js";
-
 class RaytracingManager {
   constructor(props) {
     this.viewportHeight = props.viewportHeight;
@@ -30,247 +28,70 @@ class RaytracingManager {
     };
   }
 
-  #calculateReflectedRay(reverseIncomingRay, normalToShapeSurface) {
-    let reflectedRayVector = mathServices.subtractVectors(
-      mathServices.scaleVector(
-        mathServices.scaleVector(normalToShapeSurface, 2),
-        mathServices.dotProduct(normalToShapeSurface, reverseIncomingRay)
-      ),
-      reverseIncomingRay
+  async startRaytracing() {
+    const numCores = navigator.hardwareConcurrency || 4;
+    const workers = Array.from(
+      { length: numCores },
+      () => new Worker("./CPURaytracer/RaytracingWorker.js", { type: "module" })
     );
-    return reflectedRayVector;
-  }
 
-  #calculateLighting({
-    color,
-    intersectionPoint,
-    normalToShapeSurface,
-    reverseDirectionVector,
-    specular,
-  }) {
-    if (!intersectionPoint) {
-      return color;
+    const startX = -(this.canvasWidth / 2);
+    const endX = this.canvasWidth / 2;
+    const startY = -(this.canvasHeight / 2);
+    const endY = this.canvasHeight / 2;
+
+    const ratioW = this.viewportWidth / this.canvasWidth;
+    const ratioH = this.viewportHeight / this.canvasHeight;
+
+    // Collect all pixels
+    const allPixels = [];
+    for (let x = startX; x < endX; x++) {
+      for (let y = startY; y < endY; y++) {
+        allPixels.push({ x, y });
+      }
     }
-    let intensity = 0.0,
-      tMax,
-      tMin = 0.001;
-    for (let light of this.lightData) {
-      if (light.type === "ambient") {
-        intensity += light.intensity;
-      } else {
-        let lightVector = null;
-        if (light.type === "point") {
-          lightVector = mathServices.subtractVectors(
-            light.position,
-            intersectionPoint
-          );
-          tMax = 1;
-        } else if (light.type === "directional") {
-          lightVector = light.direction;
-          tMax = Number.POSITIVE_INFINITY;
-        }
 
-        //shaodows
-        let { closestShape: lightBlockingShape } = this.#closestIntersection({
-          tMin: tMin,
-          tMax: tMax,
-          originVector: intersectionPoint,
-          directionVector: lightVector,
+    // Divide pixels into chunks for each worker
+    const chunkSize = Math.ceil(allPixels.length / numCores);
+    const pixelChunks = Array.from({ length: numCores }, (_, i) =>
+      allPixels.slice(i * chunkSize, (i + 1) * chunkSize)
+    );
+
+    // Send chunks to workers in parallel
+    const results = await Promise.all(
+      pixelChunks.map((chunk, i) => {
+        return new Promise((resolve, reject) => {
+          const worker = workers[i];
+          worker.onerror = (e) => reject(e);
+          worker.onmessage = (e) => resolve(e.data);
+          worker.postMessage({
+            shapeData: this.shapeData,
+            lightData: this.lightData,
+            noIntersectionColor: this.noIntersectionColor,
+            tMin: 1,
+            tMax: Number.POSITIVE_INFINITY,
+            originVector: this.cameraPosition,
+            pixels: chunk,
+            ratioW,
+            ratioH,
+            distanceFromCameraToViewport: this.distanceFromCameraToViewport,
+            recursionLimit: this.reflectiveRecursionLimit,
+          });
         });
-        if (lightBlockingShape !== null) {
-          continue;
-        }
+      })
+    );
 
-        //diffuse reflection
-        let dotProductOfNormalAndLightVector = mathServices.dotProduct(
-          lightVector,
-          normalToShapeSurface
-        );
-        if (dotProductOfNormalAndLightVector > 0) {
-          let magnitudeOfLightVector =
-            mathServices.magnitudeOfVector(lightVector);
-          let magnitudeOfNormalVector =
-            mathServices.magnitudeOfVector(normalToShapeSurface);
-          intensity +=
-            light.intensity *
-            (dotProductOfNormalAndLightVector /
-              (magnitudeOfLightVector * magnitudeOfNormalVector));
-        }
-
-        // specular reflection
-        if (specular !== -1) {
-          let reflectedRayVector = this.#calculateReflectedRay(
-            lightVector,
-            normalToShapeSurface
-          );
-          let dotProductOfReflectedRayVectorAndReverseDirectionVector =
-            mathServices.dotProduct(reflectedRayVector, reverseDirectionVector);
-
-          if (dotProductOfReflectedRayVectorAndReverseDirectionVector > 0) {
-            let magnitudeOfReflectedRayVector =
-              mathServices.magnitudeOfVector(reflectedRayVector);
-            let magnitudeOfReverseDirectionVector =
-              mathServices.magnitudeOfVector(reverseDirectionVector);
-            intensity +=
-              light.intensity *
-              (dotProductOfReflectedRayVectorAndReverseDirectionVector /
-                (magnitudeOfReflectedRayVector *
-                  magnitudeOfReverseDirectionVector)) **
-                specular;
-          }
-        }
-      }
-    }
-    return {
-      r: color.r * intensity,
-      g: color.g * intensity,
-      b: color.b * intensity,
-    };
-  }
-
-  #closestIntersection({ tMin, tMax, originVector, directionVector }) {
-    let closestT = Number.POSITIVE_INFINITY;
-    let closestShape = null;
-    for (let shape of this.shapeData) {
-      let { t1, t2 } = this.#intersectRayWithSphere({
-        originVector: originVector,
-        directionVector: directionVector,
-        shape: shape,
-      });
-      if (t1 >= tMin && t1 <= tMax && t1 < closestT) {
-        closestT = t1;
-        closestShape = shape;
-      }
-      if (t2 >= tMin && t2 <= tMax && t2 < closestT) {
-        closestT = t2;
-        closestShape = shape;
-      }
-    }
-    return { closestT: closestT, closestShape: closestShape };
-  }
-
-  #traceRay({ tMin, tMax, originVector, directionVector, recursionLimit }) {
-    let { closestShape, closestT } = this.#closestIntersection({
-      tMin,
-      tMax,
-      originVector,
-      directionVector,
+    // Flatten and render pixels
+    results.flat().forEach((pixelData) => {
+      this.putPixelCallback(
+        pixelData.canvasPixelX,
+        pixelData.canvasPixelY,
+        pixelData.color
+      );
     });
-    if (closestShape === null) {
-      return this.noIntersectionColor;
-    }
-    let intersectionPoint = mathServices.addVectors(
-      originVector,
-      mathServices.scaleVector(directionVector, closestT)
-    );
-    let closestShapeColor = closestShape.color;
-    let normalToShapeSurface = mathServices.normalizeVector(
-      mathServices.subtractVectors(intersectionPoint, closestShape.center)
-    );
 
-    let reverseDirectionVector = mathServices.subtractVectors(
-      { x: 0, y: 0, z: 0 },
-      directionVector
-    );
-
-    // reflection
-    if (
-      recursionLimit <= 0 ||
-      !closestShape.reflective ||
-      closestShape.reflective === 0.0 ||
-      closestShape.reflective <= 0
-    ) {
-      return this.#calculateLighting({
-        color: closestShapeColor,
-        intersectionPoint: intersectionPoint,
-        normalToShapeSurface: normalToShapeSurface,
-        reverseDirectionVector: reverseDirectionVector,
-        specular: closestShape.specular ?? -1,
-      });
-    }
-    let reflectedRayVector = this.#calculateReflectedRay(
-      reverseDirectionVector,
-      normalToShapeSurface
-    );
-    let iOptions = {
-      tMin: 0.001,
-      tMax: Number.POSITIVE_INFINITY,
-      originVector: intersectionPoint,
-      directionVector: reflectedRayVector,
-      recursionLimit: recursionLimit - 1,
-    };
-    let reflectedColor = this.#traceRay(iOptions);
-    let newMixedColor = {
-      r:
-        closestShapeColor.r * (1 - closestShape.reflective) +
-        reflectedColor.r * closestShape.reflective,
-      g:
-        closestShapeColor.g * (1 - closestShape.reflective) +
-        reflectedColor.g * closestShape.reflective,
-      b:
-        closestShapeColor.b * (1 - closestShape.reflective) +
-        reflectedColor.b * closestShape.reflective,
-    };
-    return this.#calculateLighting({
-      color: newMixedColor,
-      intersectionPoint: intersectionPoint,
-      normalToShapeSurface: normalToShapeSurface,
-      reverseDirectionVector: reverseDirectionVector,
-      specular: closestShape.specular ?? -1,
-    });
-  }
-
-  #intersectRayWithSphere({ directionVector, originVector, shape }) {
-    let radius = shape.radius;
-    let centerToOriginVector = mathServices.subtractVectors(
-      originVector,
-      shape.center
-    );
-
-    let a = mathServices.dotProduct(directionVector, directionVector);
-    let b = 2 * mathServices.dotProduct(centerToOriginVector, directionVector);
-    let c =
-      mathServices.dotProduct(centerToOriginVector, centerToOriginVector) -
-      radius ** 2;
-
-    let { t1, t2 } = mathServices.quadraticEquationRoots(a, b, c);
-    return {
-      t1: t1 ?? Number.POSITIVE_INFINITY,
-      t2: t2 ?? Number.POSITIVE_INFINITY,
-    };
-  }
-
-  startRaytracing() {
-    let startX = -(this.canvasWidth / 2);
-    let endX = this.canvasWidth / 2;
-    let startY = -(this.canvasHeight / 2);
-    let endY = this.canvasHeight / 2;
-    let ratioW = this.viewportWidth / this.canvasWidth;
-    let ratioH = this.viewportHeight / this.canvasHeight;
-    for (let i = startX; i <= endX; i++) {
-      for (let j = startY; j <= endY; j++) {
-        let directionVector = mathServices.subtractVectors(
-          {
-            x: i * ratioW,
-            y: j * ratioH,
-            z: this.distanceFromCameraToViewport,
-          },
-          this.cameraPosition
-        );
-
-        let color = this.#traceRay({
-          tMin: 1,
-          tMax: Number.POSITIVE_INFINITY,
-          originVector: this.cameraPosition,
-          directionVector: mathServices.rotateVectorAroundYaxis(
-            directionVector,
-            Math.PI / 20
-          ),
-          recursionLimit: this.reflectiveRecursionLimit,
-        });
-        this.putPixelCallback(i, j, color);
-      }
-    }
+    // Cleanup
+    workers.forEach((worker) => worker.terminate());
     this.onCompleteCallback();
   }
 }
