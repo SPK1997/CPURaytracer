@@ -208,5 +208,5 @@ To run the raytracer locally:
 - Integrate Web Workers for better performance
 - Refactor core logic for clarity and scalability
 - Add TypeScript declaration files for typed usage
-- Write clean docs so this can be used in real projects
+- Write clean docs so this can be used in other projects
 - Build a lightweight raytracer NPM package
