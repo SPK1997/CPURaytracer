@@ -8,6 +8,7 @@ class RaytracingManager {
     this.canvasWidth = props.canvasWidth;
     this.distanceFromCameraToViewport = props.distanceFromCameraToViewport;
     this.cameraPosition = props.cameraPosition;
+    this.reflectiveRecursionLimit = props.reflectiveRecursionLimit || 0;
     this.putPixelCallback =
       props.putPixelCallback ||
       function () {
@@ -27,6 +28,17 @@ class RaytracingManager {
       g: 0,
       b: 0,
     };
+  }
+
+  #calculateReflectedRay(reverseIncomingRay, normalToShapeSurface) {
+    let reflectedRayVector = mathServices.subtractVectors(
+      mathServices.scaleVector(
+        mathServices.scaleVector(normalToShapeSurface, 2),
+        mathServices.dotProduct(normalToShapeSurface, reverseIncomingRay)
+      ),
+      reverseIncomingRay
+    );
+    return reflectedRayVector;
   }
 
   #calculateLighting({
@@ -57,6 +69,8 @@ class RaytracingManager {
           lightVector = light.direction;
           tMax = Number.POSITIVE_INFINITY;
         }
+
+        //shaodows
         let { closestShape: lightBlockingShape } = this.#closestIntersection({
           tMin: tMin,
           tMax: tMax,
@@ -66,6 +80,8 @@ class RaytracingManager {
         if (lightBlockingShape !== null) {
           continue;
         }
+
+        //diffuse reflection
         let dotProductOfNormalAndLightVector = mathServices.dotProduct(
           lightVector,
           normalToShapeSurface
@@ -81,16 +97,15 @@ class RaytracingManager {
               (magnitudeOfLightVector * magnitudeOfNormalVector));
         }
 
+        // specular reflection
         if (specular !== -1) {
-          let reflectedRayVector = mathServices.subtractVectors(
-            mathServices.scaleVector(
-              mathServices.scaleVector(normalToShapeSurface, 2),
-              mathServices.dotProduct(normalToShapeSurface, lightVector)
-            ),
-            lightVector
+          let reflectedRayVector = this.#calculateReflectedRay(
+            lightVector,
+            normalToShapeSurface
           );
           let dotProductOfReflectedRayVectorAndReverseDirectionVector =
             mathServices.dotProduct(reflectedRayVector, reverseDirectionVector);
+
           if (dotProductOfReflectedRayVectorAndReverseDirectionVector > 0) {
             let magnitudeOfReflectedRayVector =
               mathServices.magnitudeOfVector(reflectedRayVector);
@@ -138,7 +153,7 @@ class RaytracingManager {
     return { closestT: closestT, closestShape: closestShape };
   }
 
-  #traceRay({ tMin, tMax, originVector, directionVector }) {
+  #traceRay({ tMin, tMax, originVector, directionVector, recursionLimit }) {
     let { closestShape, closestT } = this.#closestIntersection({
       tMin,
       tMax,
@@ -161,8 +176,53 @@ class RaytracingManager {
     let normalToShapeSurface = mathServices.normalizeVector(
       mathServices.subtractVectors(intersectionPoint, closestShape.center)
     );
+
+    // reflection
+    if (
+      recursionLimit <= 0 ||
+      !closestShape.reflective ||
+      closestShape.reflective === 0.0 ||
+      closestShape.reflective <= 0
+    ) {
+      return {
+        color: closestShapeColor,
+        intersectionPoint: intersectionPoint,
+        normalToShapeSurface: normalToShapeSurface,
+        specular: closestShape.specular ?? -1,
+      };
+    }
+
+    let reverseDirectionVector = mathServices.subtractVectors(
+      { x: 0, y: 0, z: 0 },
+      directionVector
+    );
+    let reflectedRayVector = this.#calculateReflectedRay(
+      reverseDirectionVector,
+      normalToShapeSurface
+    );
+    let iOptions = {
+      tMin: 0.001,
+      tMax: Number.POSITIVE_INFINITY,
+      originVector: intersectionPoint,
+      directionVector: reflectedRayVector,
+      recursionLimit: recursionLimit - 1,
+    };
+    let reflectedData = this.#traceRay(iOptions);
+    let newMixedColor = {
+      r:
+        closestShapeColor.r * (1 - closestShape.reflective) +
+        reflectedData.color.r * closestShape.reflective,
+      g:
+        closestShapeColor.g * (1 - closestShape.reflective) +
+        reflectedData.color.g * closestShape.reflective,
+      b:
+        closestShapeColor.b * (1 - closestShape.reflective) +
+        reflectedData.color.b * closestShape.reflective,
+    };
+    console.log("recursion limit", recursionLimit);
+    console.log("reflected color", newMixedColor);
     return {
-      color: closestShapeColor,
+      color: newMixedColor,
       intersectionPoint: intersectionPoint,
       normalToShapeSurface: normalToShapeSurface,
       specular: closestShape.specular ?? -1,
@@ -207,12 +267,14 @@ class RaytracingManager {
           y: j * ratioH,
           z: this.distanceFromCameraToViewport,
         });
+
         let { color, intersectionPoint, normalToShapeSurface, specular } =
           this.#traceRay({
             tMin: 1,
             tMax: Number.POSITIVE_INFINITY,
             originVector: this.cameraPosition,
             directionVector: directionVector,
+            recursionLimit: this.reflectiveRecursionLimit,
           });
         let reverseDirectionVector = mathServices.subtractVectors(
           { x: 0, y: 0, z: 0 },
