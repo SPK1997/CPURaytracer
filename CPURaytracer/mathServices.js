@@ -27,6 +27,26 @@ export default {
     return this.scaleVector(v, 1 / k);
   },
 
+  transformVector(vec, matrix) {
+    let { x, y, z } = vec;
+    return {
+      x: x * matrix[0][0] + y * matrix[1][0] + z * matrix[2][0],
+      y: x * matrix[0][1] + y * matrix[1][1] + z * matrix[2][1],
+      z: x * matrix[0][2] + y * matrix[1][2] + z * matrix[2][2],
+    };
+  },
+
+  rotateVectorAroundYaxis(v, angle) {
+    let matrix = [
+      [Math.cos(angle), 0, -Math.sin(angle)],
+      [0, 1, 0],
+      [Math.sin(angle), 0, Math.cos(angle)],
+    ];
+    let output = this.transformVector(v, matrix);
+    console.log(output);
+    return output;
+  },
+
   quadraticEquationRoots(a, b, c) {
     let d = b ** 2 - 4 * a * c;
     if (d < 0) {

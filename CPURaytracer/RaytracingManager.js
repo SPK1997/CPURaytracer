@@ -128,10 +128,6 @@ class RaytracingManager {
     };
   }
 
-  #calculateDirectionVector(viewportPosition) {
-    return mathServices.subtractVectors(viewportPosition, this.cameraPosition);
-  }
-
   #closestIntersection({ tMin, tMax, originVector, directionVector }) {
     let closestT = Number.POSITIVE_INFINITY;
     let closestShape = null;
@@ -171,7 +167,7 @@ class RaytracingManager {
     let normalToShapeSurface = mathServices.normalizeVector(
       mathServices.subtractVectors(intersectionPoint, closestShape.center)
     );
-    
+
     let reverseDirectionVector = mathServices.subtractVectors(
       { x: 0, y: 0, z: 0 },
       directionVector
@@ -185,12 +181,12 @@ class RaytracingManager {
       closestShape.reflective <= 0
     ) {
       return this.#calculateLighting({
-          color: closestShapeColor,
-          intersectionPoint: intersectionPoint,
-          normalToShapeSurface: normalToShapeSurface,
-          reverseDirectionVector: reverseDirectionVector,
-          specular: closestShape.specular ?? -1,
-        });
+        color: closestShapeColor,
+        intersectionPoint: intersectionPoint,
+        normalToShapeSurface: normalToShapeSurface,
+        reverseDirectionVector: reverseDirectionVector,
+        specular: closestShape.specular ?? -1,
+      });
     }
     let reflectedRayVector = this.#calculateReflectedRay(
       reverseDirectionVector,
@@ -216,12 +212,12 @@ class RaytracingManager {
         reflectedColor.b * closestShape.reflective,
     };
     return this.#calculateLighting({
-          color: newMixedColor,
-          intersectionPoint: intersectionPoint,
-          normalToShapeSurface: normalToShapeSurface,
-          reverseDirectionVector: reverseDirectionVector,
-          specular: closestShape.specular ?? -1,
-        });
+      color: newMixedColor,
+      intersectionPoint: intersectionPoint,
+      normalToShapeSurface: normalToShapeSurface,
+      reverseDirectionVector: reverseDirectionVector,
+      specular: closestShape.specular ?? -1,
+    });
   }
 
   #intersectRayWithSphere({ directionVector, originVector, shape }) {
@@ -244,10 +240,6 @@ class RaytracingManager {
     };
   }
 
-  changeCameraPosition({ x, y, z }) {
-    this.cameraPosition = { x: x, y: y, z: z };
-  }
-
   startRaytracing() {
     let startX = -(this.canvasWidth / 2);
     let endX = this.canvasWidth / 2;
@@ -257,20 +249,25 @@ class RaytracingManager {
     let ratioH = this.viewportHeight / this.canvasHeight;
     for (let i = startX; i <= endX; i++) {
       for (let j = startY; j <= endY; j++) {
-        let directionVector = this.#calculateDirectionVector({
-          x: i * ratioW,
-          y: j * ratioH,
-          z: this.distanceFromCameraToViewport,
-        });
+        let directionVector = mathServices.subtractVectors(
+          {
+            x: i * ratioW,
+            y: j * ratioH,
+            z: this.distanceFromCameraToViewport,
+          },
+          this.cameraPosition
+        );
 
-        let color =
-          this.#traceRay({
-            tMin: 1,
-            tMax: Number.POSITIVE_INFINITY,
-            originVector: this.cameraPosition,
-            directionVector: directionVector,
-            recursionLimit: this.reflectiveRecursionLimit,
-          });
+        let color = this.#traceRay({
+          tMin: 1,
+          tMax: Number.POSITIVE_INFINITY,
+          originVector: this.cameraPosition,
+          directionVector: mathServices.rotateVectorAroundYaxis(
+            directionVector,
+            Math.PI / 20
+          ),
+          recursionLimit: this.reflectiveRecursionLimit,
+        });
         this.putPixelCallback(i, j, color);
       }
     }
