@@ -6,6 +6,8 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ## Current Progress
 
+- New Milestone: Reflections of other objects on surface of an object
+
 ![Raytraced Sphere](readmeImages/current_progress.png)
 
 ---
@@ -121,6 +123,17 @@ Therefore, when no lights are present, it will be pitch black as shown in below 
 - This ray starts at the intersection point and travels in the direction of the light source.
 - If this shadow ray intersects any other object before reaching the light, it means the light is blocked, and point P lies in shadow.
 - If no object obstructs the shadow ray, then the light reaches point P, and we proceed with lighting calculations (diffuse, specular)
+
+---
+
+## Modelling Reflections of other objects on surface
+
+To make surfaces look shiny or mirror-like, we simulate how light bounces off them. When a ray of light hits a reflective object, we send another ray in the direction it would bounce — just like how you'd see your reflection in a mirror.
+
+This new ray continues the same process: it might hit something else, reflect again, and so on. We recursively repeat this bounce a few times to create realistic reflections, but stop after a set limit to avoid infinite loop (like mirror infront of mirror scenario)
+
+Limitation
+Right now, all of this happens on the main thread — and since every pixel may involve multiple recursive rays, the UI can freeze. Using Web Workers to offload this heavy computation can make rendering much smoother and faster.
 
 ---
 

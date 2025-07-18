@@ -20,7 +20,7 @@ let shapeData = [
     radius: 1,
     color: { r: 0, g: 0, b: 255 },
     specular: 500,
-    reflective: 0.3,
+    reflective: 0.5,
   },
   {
     center: { x: 1.5, y: 1, z: 3 },
@@ -29,13 +29,6 @@ let shapeData = [
     specular: 10,
     reflective: 0.4,
   },
-  // {
-  //   center: { x: 0, y: -5001, z: 0 },
-  //   radius: 5000,
-  //   color: { r: 255, g: 255, b: 0 },
-  //   reflective: 0.5,
-  //   specular: 1000,
-  // },
 ];
 let lightData = [
   {
