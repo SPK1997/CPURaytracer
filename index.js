@@ -13,21 +13,19 @@ let shapeData = [
     radius: 1,
     color: { r: 255, g: 0, b: 0 },
     specular: 500,
-    reflective: 0.2,
   },
   {
     center: { x: -1.5, y: 0.5, z: 3 },
     radius: 1,
-    color: { r: 0, g: 0, b: 255 },
+    color: { r: 255, g: 255, b: 255 },
     specular: 500,
-    reflective: 0.5,
+    reflective: 0.9,
   },
   {
     center: { x: 1.5, y: 1, z: 3 },
     radius: 1,
     color: { r: 0, g: 255, b: 0 },
-    specular: 10,
-    reflective: 0.4,
+    specular: 800,
   },
 ];
 let lightData = [
@@ -64,7 +62,7 @@ let rm = new RaytracingManager({
   shapeData: shapeData,
   lightData: lightData,
   noIntersectionColor: { r: 255, g: 255, b: 255 },
-  reflectiveRecursionLimit: 1,
+  reflectiveRecursionLimit: 10,
   putPixelCallback: (x, y, color) => {
     cm.putPixel({
       x: x,
