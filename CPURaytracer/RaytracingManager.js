@@ -161,20 +161,20 @@ class RaytracingManager {
       directionVector,
     });
     if (closestShape === null) {
-      return {
-        color: this.noIntersectionColor,
-        intersectionPoint: null,
-        normalToShapeSurface: null,
-        specular: -1,
-      };
+      return this.noIntersectionColor;
     }
     let intersectionPoint = mathServices.addVectors(
-      this.cameraPosition,
+      originVector,
       mathServices.scaleVector(directionVector, closestT)
     );
     let closestShapeColor = closestShape.color;
     let normalToShapeSurface = mathServices.normalizeVector(
       mathServices.subtractVectors(intersectionPoint, closestShape.center)
+    );
+    
+    let reverseDirectionVector = mathServices.subtractVectors(
+      { x: 0, y: 0, z: 0 },
+      directionVector
     );
 
     // reflection
@@ -184,18 +184,14 @@ class RaytracingManager {
       closestShape.reflective === 0.0 ||
       closestShape.reflective <= 0
     ) {
-      return {
-        color: closestShapeColor,
-        intersectionPoint: intersectionPoint,
-        normalToShapeSurface: normalToShapeSurface,
-        specular: closestShape.specular ?? -1,
-      };
+      return this.#calculateLighting({
+          color: closestShapeColor,
+          intersectionPoint: intersectionPoint,
+          normalToShapeSurface: normalToShapeSurface,
+          reverseDirectionVector: reverseDirectionVector,
+          specular: closestShape.specular ?? -1,
+        });
     }
-
-    let reverseDirectionVector = mathServices.subtractVectors(
-      { x: 0, y: 0, z: 0 },
-      directionVector
-    );
     let reflectedRayVector = this.#calculateReflectedRay(
       reverseDirectionVector,
       normalToShapeSurface
@@ -207,26 +203,25 @@ class RaytracingManager {
       directionVector: reflectedRayVector,
       recursionLimit: recursionLimit - 1,
     };
-    let reflectedData = this.#traceRay(iOptions);
+    let reflectedColor = this.#traceRay(iOptions);
     let newMixedColor = {
       r:
         closestShapeColor.r * (1 - closestShape.reflective) +
-        reflectedData.color.r * closestShape.reflective,
+        reflectedColor.r * closestShape.reflective,
       g:
         closestShapeColor.g * (1 - closestShape.reflective) +
-        reflectedData.color.g * closestShape.reflective,
+        reflectedColor.g * closestShape.reflective,
       b:
         closestShapeColor.b * (1 - closestShape.reflective) +
-        reflectedData.color.b * closestShape.reflective,
+        reflectedColor.b * closestShape.reflective,
     };
-    console.log("recursion limit", recursionLimit);
-    console.log("reflected color", newMixedColor);
-    return {
-      color: newMixedColor,
-      intersectionPoint: intersectionPoint,
-      normalToShapeSurface: normalToShapeSurface,
-      specular: closestShape.specular ?? -1,
-    };
+    return this.#calculateLighting({
+          color: newMixedColor,
+          intersectionPoint: intersectionPoint,
+          normalToShapeSurface: normalToShapeSurface,
+          reverseDirectionVector: reverseDirectionVector,
+          specular: closestShape.specular ?? -1,
+        });
   }
 
   #intersectRayWithSphere({ directionVector, originVector, shape }) {
@@ -268,7 +263,7 @@ class RaytracingManager {
           z: this.distanceFromCameraToViewport,
         });
 
-        let { color, intersectionPoint, normalToShapeSurface, specular } =
+        let color =
           this.#traceRay({
             tMin: 1,
             tMax: Number.POSITIVE_INFINITY,
@@ -276,18 +271,7 @@ class RaytracingManager {
             directionVector: directionVector,
             recursionLimit: this.reflectiveRecursionLimit,
           });
-        let reverseDirectionVector = mathServices.subtractVectors(
-          { x: 0, y: 0, z: 0 },
-          directionVector
-        );
-        let colorWithIntensityAdjusted = this.#calculateLighting({
-          color,
-          intersectionPoint,
-          normalToShapeSurface,
-          reverseDirectionVector,
-          specular,
-        });
-        this.putPixelCallback(i, j, colorWithIntensityAdjusted);
+        this.putPixelCallback(i, j, color);
       }
     }
     this.onCompleteCallback();
