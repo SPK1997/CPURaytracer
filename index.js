@@ -16,25 +16,26 @@ let shapeData = [
     reflective: 0.2,
   },
   {
-    center: { x: 2, y: 0, z: 4 },
+    center: { x: -1.5, y: 0.5, z: 3 },
     radius: 1,
     color: { r: 0, g: 0, b: 255 },
-    specular: 1000,
+    specular: 500,
     reflective: 0.3,
   },
   {
-    center: { x: -2, y: 0, z: 4 },
+    center: { x: 1.5, y: 1, z: 3 },
     radius: 1,
     color: { r: 0, g: 255, b: 0 },
     specular: 10,
     reflective: 0.4,
   },
-  {
-    center: { x: 0, y: 2, z: 10 },
-    radius: 2,
-    color: { r: 0, g: 255, b: 255 },
-    reflective: 0.5,
-  },
+  // {
+  //   center: { x: 0, y: -5001, z: 0 },
+  //   radius: 5000,
+  //   color: { r: 255, g: 255, b: 0 },
+  //   reflective: 0.5,
+  //   specular: 1000,
+  // },
 ];
 let lightData = [
   {
