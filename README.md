@@ -204,7 +204,6 @@ To run the raytracer locally:
 
 ## Planned Work
 
-- Add reflections of other objects on an object
-- Support multiple object types (planes, boxes, etc.)
+- Improve structure and performance of code
 - Build a lightweight raytracer NPM package
 - Port math engine to WebAssembly for performance
