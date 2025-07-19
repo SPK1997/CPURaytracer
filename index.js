@@ -5,8 +5,6 @@ let canvasHeight = 400;
 let canvasWidth = 400;
 let distanceFromCameraToViewport = 1;
 let cameraPosition = { x: 0, y: 0, z: 0 };
-let viewportHeight = 1;
-let viewportWidth = 1;
 let shapeData = [
   {
     center: { x: 0, y: -1, z: 3 },
@@ -52,9 +50,8 @@ let cm = new CanvasManager({
 });
 cm.showCanvas();
 
+let t1 = window.performance.now();
 let rm = new RaytracingManager({
-  viewportHeight: viewportHeight,
-  viewportWidth: viewportWidth,
   canvasHeight: canvasHeight,
   canvasWidth: canvasWidth,
   cameraPosition: cameraPosition,
@@ -72,6 +69,7 @@ let rm = new RaytracingManager({
   },
   onCompleteCallback: () => {
     cm.render();
+    console.log(window.performance.now() - t1);
   },
 });
 

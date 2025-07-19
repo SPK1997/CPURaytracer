@@ -1,9 +1,12 @@
 class RaytracingManager {
+  #viewportHeight;
+  #viewportWidth;
   constructor(props) {
-    this.viewportHeight = props.viewportHeight;
-    this.viewportWidth = props.viewportWidth;
     this.canvasHeight = props.canvasHeight;
     this.canvasWidth = props.canvasWidth;
+    this.#viewportHeight = 1;
+    this.#viewportWidth =
+      (this.canvasWidth / this.canvasHeight) * this.#viewportHeight;
     this.distanceFromCameraToViewport = props.distanceFromCameraToViewport;
     this.cameraPosition = props.cameraPosition;
     this.reflectiveRecursionLimit = props.reflectiveRecursionLimit || 0;
@@ -40,8 +43,8 @@ class RaytracingManager {
     const startY = -(this.canvasHeight / 2);
     const endY = this.canvasHeight / 2;
 
-    const ratioW = this.viewportWidth / this.canvasWidth;
-    const ratioH = this.viewportHeight / this.canvasHeight;
+    const ratioW = this.#viewportWidth / this.canvasWidth;
+    const ratioH = this.#viewportHeight / this.canvasHeight;
 
     // Collect all pixels
     const allPixels = [];
