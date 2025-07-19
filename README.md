@@ -14,10 +14,14 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ![Performance Benchmark](readmeImages/performance.png)
 
-- Performance Benchmarks
+- Performance Benchmarks:
+
   **Resolutions Tested: 200x200 to 1280x720**
+
   **Data: 882 spheres in a 3D Grid**
+
   **Processor: 12th Gen Intel(R) Core(TM) i5-1235U 1.30 GHz**
+
   **Threads: 12**
 
 ---
