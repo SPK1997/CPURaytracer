@@ -26,6 +26,30 @@ let shapeData = [
     specular: 800,
   },
 ];
+
+// GENERATE 882 Spheres in a 3D Grid
+// let shapeData = [];
+// let gridSize = 10;
+// let spacing = 1.8;
+
+// for (let x = -gridSize; x <= gridSize; x++) {
+//   for (let y = -gridSize; y <= gridSize; y++) {
+//     for (let z = 0; z < 2; z++) {
+//       shapeData.push({
+//         center: { x: x * spacing, y: y * spacing, z: z * spacing + 3 },
+//         radius: 0.8,
+//         color: {
+//           r: Math.floor(Math.random() * 256),
+//           g: Math.floor(Math.random() * 256),
+//           b: Math.floor(Math.random() * 256),
+//         },
+//         specular: Math.floor(Math.random() * 1000),
+//         reflective: Math.random() * 0.5,
+//       });
+//     }
+//   }
+// }
+
 let lightData = [
   {
     type: "ambient",
