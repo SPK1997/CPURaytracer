@@ -1,6 +1,8 @@
 import { CanvasManager } from "./CPURaytracer/CanvasManager.js";
 import { RaytracingManager } from "./CPURaytracer/RaytracingManager.js";
 
+let previousClientX = null;
+let moveTimeout = null;
 let canvasHeight = 400;
 let canvasWidth = 400;
 let distanceFromCameraToViewport = 1;
@@ -73,8 +75,30 @@ let cm = new CanvasManager({
   width: canvasWidth,
 });
 cm.showCanvas();
+cm.enableMouseMovements({
+  onpointerdownCb: (e) => {
+    previousClientX = e.clientX;
+  },
+  onpointerupCb: async (e) => {
+    previousClientX = null;
+    for (let step = 30; step >= 1; step -= 1) {
+      await rm.startRaytracing(step);
+      cm.render();
+    }
+  },
+  onpointermoveCb: (e) => {
+    if (!previousClientX) return;
+    let deltaClientX = e.clientX - previousClientX;
+    let angleX = deltaClientX * 0.001;
+    rm.cameraAngle = angleX;
+    clearTimeout(moveTimeout);
+    moveTimeout = setTimeout(async () => {
+      await rm.startRaytracing(100); // Render low-res while moving
+      cm.render();
+    }, 20); // ~50 FPS
+  },
+});
 
-let t1 = window.performance.now();
 let rm = new RaytracingManager({
   canvasHeight: canvasHeight,
   canvasWidth: canvasWidth,
@@ -91,10 +115,7 @@ let rm = new RaytracingManager({
       color: color,
     });
   },
-  onCompleteCallback: () => {
-    cm.render();
-    console.log(window.performance.now() - t1);
-  },
 });
 
-rm.startRaytracing();
+await rm.startRaytracing();
+cm.render();

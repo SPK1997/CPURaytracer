@@ -3,7 +3,7 @@ class EventsManager {
   constructor() {
     this.#eventSignals = {};
   }
-  subscribeEvent({element, eventName, callback, signalName}) {
+  subscribeEvent({ element, eventName, callback, signalName }) {
     if (this.#eventSignals[eventName]) {
       return;
     }
@@ -15,8 +15,10 @@ class EventsManager {
   }
 
   unsubScribeEvent(signalName) {
-    this.#eventSignals[signalName].abort();
-    delete this.#eventSignals[signalName];
+    if (Object.hasOwnProperty.call(this.#eventSignals, signalName)) {
+      this.#eventSignals[signalName]?.abort();
+      delete this.#eventSignals[signalName];
+    }
   }
 }
 

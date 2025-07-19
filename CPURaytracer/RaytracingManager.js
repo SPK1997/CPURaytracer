@@ -15,11 +15,6 @@ class RaytracingManager {
       function () {
         console.warn("putPixelCallback is missing in RaytracingManager");
       };
-    this.onCompleteCallback =
-      props.onCompleteCallback ||
-      function () {
-        console.warn("onCompleteCallback is missing in RaytracingManager");
-      };
     this.shapeData =
       props.shapeData && props.shapeData.length ? props.shapeData : [];
     this.lightData =
@@ -29,9 +24,10 @@ class RaytracingManager {
       g: 0,
       b: 0,
     };
+    this.cameraAngle = 0;
   }
 
-  async startRaytracing() {
+  async startRaytracing(step = 1) {
     const numCores = navigator.hardwareConcurrency || 4;
     const workers = Array.from(
       { length: numCores },
@@ -48,8 +44,8 @@ class RaytracingManager {
 
     // Collect all pixels
     const allPixels = [];
-    for (let x = startX; x < endX; x++) {
-      for (let y = startY; y < endY; y++) {
+    for (let x = startX; x < endX; x += step) {
+      for (let y = startY; y < endY; y += step) {
         allPixels.push({ x, y });
       }
     }
@@ -68,6 +64,7 @@ class RaytracingManager {
           worker.onerror = (e) => reject(e);
           worker.onmessage = (e) => resolve(e.data);
           worker.postMessage({
+            cameraAngle: this.cameraAngle,
             shapeData: this.shapeData,
             lightData: this.lightData,
             noIntersectionColor: this.noIntersectionColor,
@@ -95,7 +92,6 @@ class RaytracingManager {
 
     // Cleanup
     workers.forEach((worker) => worker.terminate());
-    this.onCompleteCallback();
   }
 }
 

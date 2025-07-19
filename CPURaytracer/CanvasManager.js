@@ -1,7 +1,10 @@
+import { EventsManager } from "./EventsManager.js";
+
 class CanvasManager {
   #ctx;
   #canvas;
   #imageData;
+  #eventsManager;
   constructor({ target, height, width }) {
     this.#canvas = null;
     this.#ctx = null;
@@ -9,6 +12,7 @@ class CanvasManager {
     this.width = width;
     this.target = target;
     this.#imageData = null;
+    this.#eventsManager = new EventsManager();
   }
 
   changeDimensions(height, width) {
@@ -47,7 +51,7 @@ class CanvasManager {
 
   clearCanvas() {
     if (this.#canvas) {
-      this.#ctx.clearReact(0, 0, this.width, this.height);
+      this.#ctx.clearRect(0, 0, this.width, this.height);
     }
   }
 
@@ -56,6 +60,46 @@ class CanvasManager {
       this.#canvas.remove();
     }
     this.#canvas = null;
+    this.disableMouseMovements();
+  }
+
+  enableMouseMovements({ onpointerdownCb, onpointerupCb, onpointermoveCb }) {
+    if (!this.#canvas) {
+      console.warn(
+        "Use showCanvas() method of CanvasManager to create canvas first"
+      );
+      return;
+    }
+    this.#eventsManager.subscribeEvent({
+      element: this.#canvas,
+      eventName: "pointerdown",
+      callback: (e) => {
+        onpointerdownCb(e);
+      },
+      signalName: "PointerDownEvent",
+    });
+    this.#eventsManager.subscribeEvent({
+      element: this.#canvas,
+      eventName: "pointerup",
+      callback: (e) => {
+        onpointerupCb(e);
+      },
+      signalName: "PointerUpEvent",
+    });
+    this.#eventsManager.subscribeEvent({
+      element: this.#canvas,
+      eventName: "pointermove",
+      callback: (e) => {
+        onpointermoveCb(e);
+      },
+      signalName: "PointerMoveEvent",
+    });
+  }
+
+  disableMouseMovements() {
+    this.#eventsManager.unsubScribeEvent("PointerDownEvent");
+    this.#eventsManager.unsubScribeEvent("PointerUpEvent");
+    this.#eventsManager.unsubScribeEvent("PointerMoveEvent");
   }
 
   #mapCoordinates(x, y) {
