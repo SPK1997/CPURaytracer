@@ -6,9 +6,13 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ## Current Progress
 
-- New Milestone: Reflections of other objects on surface of an object
+- New Milestone: Added web workers and measured performance by rendering 882 spheres in a 3D grid.
 
 ![Raytraced Sphere](readmeImages/current_progress.png)
+
+- The chart shows the performance for different resolutions
+
+![Performance Benchmark](readmeImages/performance.png)
 
 ---
 
@@ -205,7 +209,7 @@ To run the raytracer locally:
 ## Planned Work
 
 🔄 Next Up
-- Integrate Web Workers for better performance
+
 - Refactor core logic for clarity and scalability
 - Add TypeScript declaration files for typed usage
 - Write clean docs so this can be used in other projects
