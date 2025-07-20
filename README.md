@@ -28,10 +28,6 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ## Project Structure
 
-### CPURaytracer/EventsManager.js
-
-Handles adding and removing event listeners to the DOM.
-
 ### CPURaytracer/CanvasManager.js
 
 Responsible for creating, updating, and destroying the canvas element used for rendering.

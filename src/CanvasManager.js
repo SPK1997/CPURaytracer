@@ -2,7 +2,6 @@ class CanvasManager {
   #ctx;
   #canvas;
   #imageData;
-  #eventsManager;
   constructor({ target, height, width }) {
     this.#canvas = null;
     this.#ctx = null;
@@ -10,7 +9,6 @@ class CanvasManager {
     this.width = width;
     this.target = target;
     this.#imageData = null;
-    this.#eventsManager = new EventsManager();
   }
 
   changeDimensions(height, width) {
