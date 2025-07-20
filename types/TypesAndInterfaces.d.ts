@@ -28,21 +28,8 @@ export interface RaytracingManagerProps {
   distanceFromCameraToViewport: number;
   cameraPosition: Vector3;
   reflectiveRecursionLimit?: number;
-  putPixelCallback?: (x: number, y: number, color: Color) => void;
+  putPixelCallback?: (props: Pixel) => void;
   shapeData?: any[];
   lightData?: any[];
   noIntersectionColor?: Color;
-}
-
-export interface SubscribeEventParams {
-  element: HTMLElement;
-  eventName: string;
-  callback: EventListenerOrEventListenerObject;
-  signalName: string;
-}
-
-export interface EnableMouseMovementsArgs {
-  onpointerdownCb: (e: PointerEvent) => void;
-  onpointerupCb: (e: PointerEvent) => void;
-  onpointermoveCb: (e: PointerEvent) => void;
 }
