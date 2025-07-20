@@ -1,5 +1,3 @@
-import { EventsManager } from "./EventsManager.js";
-
 class CanvasManager {
   #ctx;
   #canvas;
@@ -60,46 +58,6 @@ class CanvasManager {
       this.#canvas.remove();
     }
     this.#canvas = null;
-    this.disableMouseMovements();
-  }
-
-  enableMouseMovements({ onpointerdownCb, onpointerupCb, onpointermoveCb }) {
-    if (!this.#canvas) {
-      console.warn(
-        "Use showCanvas() method of CanvasManager to create canvas first"
-      );
-      return;
-    }
-    this.#eventsManager.subscribeEvent({
-      element: this.#canvas,
-      eventName: "pointerdown",
-      callback: (e) => {
-        onpointerdownCb(e);
-      },
-      signalName: "PointerDownEvent",
-    });
-    this.#eventsManager.subscribeEvent({
-      element: this.#canvas,
-      eventName: "pointerup",
-      callback: (e) => {
-        onpointerupCb(e);
-      },
-      signalName: "PointerUpEvent",
-    });
-    this.#eventsManager.subscribeEvent({
-      element: this.#canvas,
-      eventName: "pointermove",
-      callback: (e) => {
-        onpointermoveCb(e);
-      },
-      signalName: "PointerMoveEvent",
-    });
-  }
-
-  disableMouseMovements() {
-    this.#eventsManager.unsubScribeEvent("PointerDownEvent");
-    this.#eventsManager.unsubScribeEvent("PointerUpEvent");
-    this.#eventsManager.unsubScribeEvent("PointerMoveEvent");
   }
 
   #mapCoordinates(x, y) {

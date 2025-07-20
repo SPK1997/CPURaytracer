@@ -84,11 +84,11 @@ class RaytracingManager {
 
     // Flatten and render pixels
     results.flat().forEach((pixelData) => {
-      this.putPixelCallback(
-        pixelData.canvasPixelX,
-        pixelData.canvasPixelY,
-        pixelData.color
-      );
+      this.putPixelCallback({
+        x: pixelData.canvasPixelX,
+        y: pixelData.canvasPixelY,
+        color: pixelData.color,
+      });
     });
 
     // Cleanup
