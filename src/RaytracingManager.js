@@ -32,7 +32,9 @@ class RaytracingManager {
     const workers = Array.from(
       { length: numCores },
       () =>
-        new Worker("./CPURaytracer/src/RaytracingWorker.js", { type: "module" })
+        new Worker(new URL("./RaytracingWorker.js", import.meta.url), {
+          type: "module",
+        })
     );
 
     const startX = -(this.canvasWidth / 2);
