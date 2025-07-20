@@ -1,4 +1,4 @@
-import { Vector3, Matrix3x3 } from "./TypesAndInterfaces.ts";
+import { Vector3, Matrix3x3 } from "./TypesAndInterfaces";
 
 declare const vectorUtils: {
   subtractVectors(v1: Vector3, v2: Vector3): Vector3;

@@ -4,7 +4,7 @@ import {
   Pixel as _Pixel,
   RaytracingManagerProps as _RaytracingManagerProps,
   Matrix3x3 as _Matrix3x3,
-} from "./TypesAndInterfaces.d.ts";
+} from "./TypesAndInterfaces";
 import { RaytracingManager } from "../src/RaytracingManager.js";
 import { CanvasManager } from "../src/CanvasManager.js";
 

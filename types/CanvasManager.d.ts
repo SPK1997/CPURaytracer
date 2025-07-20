@@ -1,7 +1,7 @@
-import { Pixel } from "./TypesAndInterfaces.ts";
+import { Pixel, CanvasManagerProps } from "./TypesAndInterfaces";
 
 export declare class CanvasManager {
-  constructor(params: { target: HTMLElement; height: number; width: number });
+  constructor(params: CanvasManagerProps);
 
   height: number;
   width: number;

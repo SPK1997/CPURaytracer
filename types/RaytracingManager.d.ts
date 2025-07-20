@@ -3,7 +3,7 @@ import {
   Color,
   RaytracingManagerProps,
   Pixel,
-} from "./TypesAndInterfaces.ts";
+} from "./TypesAndInterfaces";
 
 export declare class RaytracingManager {
   constructor(props: RaytracingManagerProps);

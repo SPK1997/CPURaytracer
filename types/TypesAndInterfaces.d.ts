@@ -33,3 +33,9 @@ export interface RaytracingManagerProps {
   lightData?: any[];
   noIntersectionColor?: Color;
 }
+
+export interface CanvasManagerProps {
+  target: HTMLElement;
+  height: number;
+  width: number;
+}

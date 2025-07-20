@@ -1,12 +1,13 @@
 {
-  "name": "trace-ray-js",
-  "version": "0.0.15",
+  "name": "raytrace-engine",
+  "version": "0.0.1",
   "main": "dist/index.js",
   "types": "types/index.d.ts",
   "sideEffects": false,
   "files": [
     "dist",
-    "types/index.d.ts"
+    "types/index.d.ts",
+    "types/TypesAndInterfaces.d.ts"
   ],
   "repository": {
     "type": "git",
