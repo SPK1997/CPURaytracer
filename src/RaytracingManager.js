@@ -1,3 +1,5 @@
+import workerSource from "../dist/raytracingworker.bundle.js";
+
 class RaytracingManager {
   #viewportHeight;
   #viewportWidth;
@@ -29,10 +31,12 @@ class RaytracingManager {
 
   async startRaytracing(step = 1) {
     const numCores = navigator.hardwareConcurrency || 4;
+    const blob = new Blob([workerSource], { type: "application/javascript" });
+    const workerUrl = URL.createObjectURL(blob);
     const workers = Array.from(
       { length: numCores },
       () =>
-        new Worker(new URL("./RaytracingWorker.js", import.meta.url), {
+        new Worker(workerUrl, {
           type: "module",
         })
     );

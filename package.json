@@ -1,12 +1,12 @@
 {
-  "name": "ray-js",
-  "version": "0.0.1",
+  "name": "trace-ray-js",
+  "version": "0.0.15",
   "main": "dist/index.js",
   "types": "types/index.d.ts",
   "sideEffects": false,
   "files": [
     "dist",
-    "types"
+    "types/index.d.ts"
   ],
   "repository": {
     "type": "git",
@@ -14,7 +14,10 @@
   },
   "homepage": "https://github.com/SPK1997/CPURaytracer#readme",
   "scripts": {
-    "build": "webpack"
+    "build-source": "webpack --config webpack.config.js",
+    "build-worker": "webpack --config webpack.worker.config.js",
+    "clean": "npx rimraf dist",
+    "build": "npm run clean && npm run build-worker && npm run build-source"
   },
   "keywords": [
     "raytracer",

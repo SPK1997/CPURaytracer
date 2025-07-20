@@ -1,4 +1,4 @@
-import { Pixel, EnableMouseMovementsArgs } from "./TypesAndInterfaces.ts";
+import { Pixel } from "./TypesAndInterfaces.ts";
 
 export declare class CanvasManager {
   constructor(params: { target: HTMLElement; height: number; width: number });
@@ -20,8 +20,4 @@ export declare class CanvasManager {
   clearCanvas(): void;
 
   destroyCanvas(): void;
-
-  enableMouseMovements(args: EnableMouseMovementsArgs): void;
-
-  disableMouseMovements(): void;
 }

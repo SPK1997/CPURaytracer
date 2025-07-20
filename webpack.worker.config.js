@@ -1,10 +1,11 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./index.js",
+  mode: "production",
+  entry: path.resolve(__dirname, "src/RaytracingWorker.js"),
   output: {
+    filename: "raytracingworker.bundle.js",
     path: path.resolve(__dirname, "dist"),
-    filename: "index.js",
     library: {
       type: "umd",
     },
@@ -21,11 +22,6 @@ module.exports = {
           },
         },
       },
-      {
-        test: /raytracingworker\.bundle\.js$/,
-        type: "asset/source", // gets source as string
-      },
     ],
   },
-  mode: "production",
 };
