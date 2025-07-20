@@ -26,6 +26,64 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ---
 
+## Project Structure
+
+### CPURaytracer/EventsManager.js
+
+Handles adding and removing event listeners to the DOM.
+
+### CPURaytracer/CanvasManager.js
+
+Responsible for creating, updating, and destroying the canvas element used for rendering.
+
+### CPURaytracer/RaytracingManager.js
+
+Core ray tracing logic:
+
+- Generates rays
+- Computes intersections
+- Handles rendering flow
+
+### CPURaytracer/mathServices.js
+
+Contains vector algebra and geometry utilities used by the ray tracer, such as:
+
+- Vector operations
+- Dot product, subtraction, normalization
+- Ray-sphere intersection calculations
+
+---
+
+## Entry Point Files
+
+### index.html
+
+The main HTML file that bootstraps the app and mounts the canvas.
+
+### index.css
+
+Styling for the web interface.
+
+### index.js
+
+Main JavaScript entry point:
+
+- Initializes managers
+- Starts the render loop
+- Connects DOM with the raytracer engine
+
+---
+
+## Getting Started
+
+To run the raytracer locally:
+
+1. Clone this repository
+2. Open `index.html` in any modern browser
+3. Watch the pixel-by-pixel ray tracing in action
+
+---
+
 ## Raytracing Algo
 
 - Ray tracing begins with a **scene**.
@@ -148,64 +206,6 @@ This new ray continues the same process: it might hit something else, reflect ag
 
 Limitation
 Right now, all of this happens on the main thread — and since every pixel may involve multiple recursive rays, the UI can freeze. Using Web Workers to offload this heavy computation can make rendering much smoother and faster.
-
----
-
-## Project Structure
-
-### CPURaytracer/EventsManager.js
-
-Handles adding and removing event listeners to the DOM.
-
-### CPURaytracer/CanvasManager.js
-
-Responsible for creating, updating, and destroying the canvas element used for rendering.
-
-### CPURaytracer/RaytracingManager.js
-
-Core ray tracing logic:
-
-- Generates rays
-- Computes intersections
-- Handles rendering flow
-
-### CPURaytracer/mathServices.js
-
-Contains vector algebra and geometry utilities used by the ray tracer, such as:
-
-- Vector operations
-- Dot product, subtraction, normalization
-- Ray-sphere intersection calculations
-
----
-
-## Entry Point Files
-
-### index.html
-
-The main HTML file that bootstraps the app and mounts the canvas.
-
-### index.css
-
-Styling for the web interface.
-
-### index.js
-
-Main JavaScript entry point:
-
-- Initializes managers
-- Starts the render loop
-- Connects DOM with the raytracer engine
-
----
-
-## Getting Started
-
-To run the raytracer locally:
-
-1. Clone this repository
-2. Open `index.html` in any modern browser
-3. Watch the pixel-by-pixel ray tracing in action
 
 ---
 

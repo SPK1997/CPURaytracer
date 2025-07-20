@@ -1,5 +1,5 @@
-import { CanvasManager } from "./CPURaytracer/CanvasManager.js";
-import { RaytracingManager } from "./CPURaytracer/RaytracingManager.js";
+import { CanvasManager } from "./CPURaytracer/src/CanvasManager.js";
+import { RaytracingManager } from "./CPURaytracer/src/RaytracingManager.js";
 
 let previousClientX = null;
 let moveTimeout = null;
@@ -117,5 +117,11 @@ let rm = new RaytracingManager({
   },
 });
 
-await rm.startRaytracing();
-cm.render();
+rm.startRaytracing().then(
+  () => {
+    cm.render();
+  },
+  (err) => {
+    console.log(err);
+  }
+);

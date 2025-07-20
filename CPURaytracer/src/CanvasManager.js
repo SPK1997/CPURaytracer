@@ -16,8 +16,8 @@ class CanvasManager {
   }
 
   changeDimensions(height, width) {
-    this.height = height ?? this.height;
-    this.width = width ?? this.width;
+    this.height = this.height;
+    this.width = this.width;
   }
 
   changeTarget(target) {

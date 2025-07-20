@@ -1,0 +1,28 @@
+{
+  "name": "vanilla-ray",
+  "version": "1.0.0",
+  "description": "A CPU-based raytracer in vanilla JavaScript with typed declarations.",
+  "main": "index.js",
+  "types": "types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "types": "./types/index.d.ts"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SPK1997/CPURaytracer.git"
+  },
+  "keywords": [
+    "raytracer",
+    "javascript",
+    "canvas",
+    "cpu",
+    "graphics",
+    "renderer"
+  ],
+  "author": "Smruti Sagar Pattanaik",
+  "license": "MIT",
+  "type": "module"
+}

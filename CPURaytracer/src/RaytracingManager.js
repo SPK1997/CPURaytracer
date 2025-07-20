@@ -31,7 +31,8 @@ class RaytracingManager {
     const numCores = navigator.hardwareConcurrency || 4;
     const workers = Array.from(
       { length: numCores },
-      () => new Worker("./CPURaytracer/RaytracingWorker.js", { type: "module" })
+      () =>
+        new Worker("./CPURaytracer/src/RaytracingWorker.js", { type: "module" })
     );
 
     const startX = -(this.canvasWidth / 2);
