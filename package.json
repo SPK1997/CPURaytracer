@@ -1,6 +1,6 @@
 {
-  "name": "ray-cpu-js",
-  "version": "0.0.3",
+  "name": "ray-js",
+  "version": "0.0.1",
   "main": "dist/index.js",
   "types": "types/index.d.ts",
   "sideEffects": false,
