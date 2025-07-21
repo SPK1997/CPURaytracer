@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Raytracer</title>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <!-- Load your raytracer bundle -->
+    <script type="module" src="./dist/index.js"></script>
+
+    <script type="module">
+        // Import classes from raytrace engine
+        const { CanvasManager, RaytracingManager } = window['raytrace-engine'];
+
+        // Set canvas dimensions
+        let canvasHeight = 720;
+        let canvasWidth = 1080;
+
+        // Camera setup
+        let distanceFromCameraToViewport = 1;
+        let cameraPosition = { x: 0, y: 0, z: 0 };
+
+        // SHAPE DEFINITIONS
+        let shapeData = [];
+
+        /* Example scene with 3 spheres:
+           - Red sphere in the center
+           - White reflective sphere to the left
+           - Green shiny sphere to the right
+        */
+        shapeData.push(
+            {
+                center: { x: 0, y: -1, z: 3 },
+                radius: 1,
+                color: { r: 255, g: 0, b: 0 }, // Red
+                specular: 500, // How shiny it is
+            },
+            {
+                center: { x: -1.5, y: 0.5, z: 3 },
+                radius: 1,
+                color: { r: 255, g: 255, b: 255 }, // White
+                specular: 500,
+                reflective: 0.9, // Very reflective
+            },
+            {
+                center: { x: 1.5, y: 1, z: 3 },
+                radius: 1,
+                color: { r: 0, g: 255, b: 0 }, // Green
+                specular: 800, // Very shiny
+            });
+
+        /*
+        // OPTIONAL: Uncomment for a scene with 882 spheres arranged in a 3D grid
+        let gridSize = 10;
+        let spacing = 1.8;
+
+        for (let x = -gridSize; x <= gridSize; x++) {
+            for (let y = -gridSize; y <= gridSize; y++) {
+                for (let z = 0; z < 2; z++) {
+                    shapeData.push({
+                        center: { x: x * spacing, y: y * spacing, z: z * spacing + 3 },
+                        radius: 0.8,
+                        color: {
+                            r: Math.floor(Math.random() * 256),
+                            g: Math.floor(Math.random() * 256),
+                            b: Math.floor(Math.random() * 256),
+                        },
+                        specular: Math.floor(Math.random() * 1000),
+                        reflective: Math.random() * 0.5,
+                    });
+                }
+            }
+        }
+        */
+
+        // LIGHT DEFINITIONS
+        let lightData = [
+            {
+                type: "ambient", // Applies uniformly to the whole scene
+                intensity: 0.2,
+            },
+            {
+                type: "point", // Emits light from a specific position in space
+                intensity: 0.6,
+                position: { x: 2, y: 1, z: 0 },
+            },
+            {
+                type: "directional", // Light with a direction but no position (like sunlight)
+                intensity: 0.2,
+                direction: { x: 1, y: 4, z: 4 },
+            },
+        ];
+
+        // Create and display the canvas
+        let cm = new CanvasManager({
+            target: document.getElementById("root"),
+            height: canvasHeight,
+            width: canvasWidth,
+        });
+        cm.showCanvas();
+
+        // Options passed to the raytracing engine
+        let iOptions = {
+            canvasHeight: canvasHeight,
+            canvasWidth: canvasWidth,
+            cameraPosition: cameraPosition,
+            distanceFromCameraToViewport: distanceFromCameraToViewport,
+            shapeData: shapeData,
+            lightData: lightData,
+            noIntersectionColor: { r: 255, g: 255, b: 255 }, // Background color
+            reflectiveRecursionLimit: 3, // Max depth for recursive reflections
+            putPixelCallback: (pixelData) => {
+                cm.putPixel(pixelData); // Draws pixels to the canvas
+            }
+        };
+
+        // Start rendering and measure how long it takes
+        let t1 = window.performance.now();
+        let rm = new RaytracingManager(iOptions);
+        rm.start().then(() => {
+            let t2 = window.performance.now();
+
+            // Display render time in top-left corner
+            let target = document.getElementById('root');
+            let div = document.createElement('div');
+            div.innerText = t2 - t1 + ' ' + 'ms';
+            div.style.position = 'absolute';
+            div.style.top = '0px';
+            div.style.left = '0px';
+            div.style.backgroundColor = 'black';
+            div.style.color = 'white';
+            target.append(div);
+        });
+
+    </script>
+</body>
+
+</html>

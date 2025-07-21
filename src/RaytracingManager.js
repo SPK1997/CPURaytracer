@@ -6,6 +6,7 @@ class RaytracingManager {
   #workers;
   #pixelBuffer;
   #pixelBufferOffset;
+  #progressiveRenderingStep;
   constructor(props) {
     this.canvasHeight = props.canvasHeight;
     this.canvasWidth = props.canvasWidth;
@@ -33,6 +34,7 @@ class RaytracingManager {
     this.#workers = null;
     this.#pixelBuffer = [];
     this.#pixelBufferOffset = (this.canvasHeight * this.canvasWidth) / 100;
+    this.#progressiveRenderingStep = 10;
   }
 
   #spawnWorkers(numCores) {
@@ -130,7 +132,7 @@ class RaytracingManager {
     return pixelOffsets;
   }
 
-  start(step = 10) {
+  start() {
     this.#pixelBuffer = [];
     return new Promise((resolve) => {
       const startX = -(this.canvasWidth / 2);
@@ -139,10 +141,13 @@ class RaytracingManager {
       const endY = this.canvasHeight / 2;
 
       let currentPass = 0;
-      let totalPasses = step * step;
+      let totalPasses =
+        this.#progressiveRenderingStep * this.#progressiveRenderingStep;
       const passes = Array.from({ length: totalPasses }, (_, i) => i);
       passes.sort(() => Math.random() - 0.5); // shuffle
-      const pixelOffsets = this.#generatePixelOffsets(step);
+      const pixelOffsets = this.#generatePixelOffsets(
+        this.#progressiveRenderingStep
+      );
       const _renderPass = async () => {
         if (currentPass >= totalPasses) {
           this.#destroyWorkers();
@@ -158,7 +163,7 @@ class RaytracingManager {
           endY,
           pixelOffsets,
           pass,
-          step
+          this.#progressiveRenderingStep
         );
         await this.#startRaytracing(pixels);
 

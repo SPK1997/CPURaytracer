@@ -6,67 +6,34 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ## Current Progress
 
-- New Milestone: Added web workers and measured performance by rendering 882 spheres in a 3D grid.
-
-![Raytraced Sphere](readmeImages/current_progress.png)
-
-- The chart shows the performance for different resolutions
-
-![Performance Benchmark](readmeImages/performance.png)
-
-- Performance Benchmarks:
-
-  **Resolutions Tested: 200x200 to 1280x720**
-
-  **Data: 882 spheres in a 3D Grid**
-
-  **Processor: 12th Gen Intel(R) Core(TM) i5-1235U 1.30 GHz**
-
-  **Threads: 12**
+- ✅ Progressive loading is now integrated into the ray tracing engine.
+- ⚡ This makes the UI more responsive, giving users early visual feedback while rendering.
+- 🎥 [Watch a demo on YouTube](https://www.youtube.com/watch?v=zL2WcQBKGdU)
 
 ---
 
 ## Project Structure
 
-### CPURaytracer/CanvasManager.js
+### `src/CanvasManager.js`
 
 Responsible for creating, updating, and destroying the canvas element used for rendering.
 
-### CPURaytracer/RaytracingManager.js
+### `src/RaytracingManager.js`
 
-Core ray tracing logic:
+- Starts and stops web workers.
+- Progressively loads pixels.
 
-- Generates rays
-- Computes intersections
-- Handles rendering flow
+### `src/mathServices.js`
 
-### CPURaytracer/mathServices.js
+Contains vector algebra and geometry utilities used by the ray tracer.
 
-Contains vector algebra and geometry utilities used by the ray tracer, such as:
+### `src/RaytracingWorker.js`
 
-- Vector operations
-- Dot product, subtraction, normalization
-- Ray-sphere intersection calculations
+Contains the web worker logic which is the core ray tracing logic:
 
----
-
-## Entry Point Files
-
-### index.html
-
-The main HTML file that bootstraps the app and mounts the canvas.
-
-### index.css
-
-Styling for the web interface.
-
-### index.js
-
-Main JavaScript entry point:
-
-- Initializes managers
-- Starts the render loop
-- Connects DOM with the raytracer engine
+- Generates rays.
+- Computes intersections from shape data.
+- Computes reflections (matte, specular, other objects on surface) and shadows from lighting data.
 
 ---
 
@@ -74,11 +41,126 @@ Main JavaScript entry point:
 
 To run the raytracer locally:
 
-1. Clone this repository
-2. Open `index.html` in any modern browser
-3. Watch the pixel-by-pixel ray tracing in action
+1. Clone this repository.
+2. Built the project. Run the command `npm run build`
+3. Open `index.html` in any modern browser.
+4. Watch the pixel-by-pixel ray tracing in action.
+5. Alternatively, the NPM package `'raytrace-engine'` can be installed and used.
 
 ---
+
+## Understanding the `index.html` File
+
+Appropriate comments are added to `index.html`. It is advised to read it alongside this explanation:
+
+### Usage
+
+1. To use this raytrace engine, you need two managers: `CanvasManager` and `RaytracingManager`.
+
+2. The options provided to `CanvasManager` during instantiation are:
+
+   - `target`: An HTML element which will contain the HTML canvas element.
+   - `height`: Height of the canvas.
+   - `width`: Width of the canvas.
+
+3. The options provided to `RaytracingManager` during instantiation are:
+   - `canvasHeight`: Determines viewport height.
+   - `canvasWidth`: Determines viewport width.
+   - `cameraPosition`: The `{x, y, z}` coordinates of the camera.
+   - `distanceFromCameraToViewport`: Distance `D` from the camera to the viewport.
+   - `shapeData`: An array of objects describing each shape (currently only spheres supported).
+   - `lightData`: An array of objects describing light sources.
+   - `noIntersectionColor`: Background color when a ray hits nothing.
+   - `reflectiveRecursionLimit`: Max number of bounces for reflective rays.
+   - `putPixelCallback`: A callback that receives an array of pixel objects `{x, y, color}` to render on the canvas.
+
+---
+
+## `shapeData` Format
+
+Each object in `shapeData` represents a sphere.
+
+### Required properties:
+
+- `center`: `{ x, y, z }` — position of the sphere in 3D space.
+- `radius`: `number` — radius of the sphere.
+- `color`: `{ r, g, b }` — color of the sphere (0–255 for each channel).
+
+### Optional properties:
+
+- `specular`: `number` — higher values make the surface shinier (e.g., 500 for glossy, 0 for matte).
+- `reflective`: `number` (0 to 1) — determines how reflective the surface is. `1` is a mirror, `0` means no reflection.
+
+### Example:
+
+```js
+shapeData = [
+  {
+    center: { x: 0, y: -1, z: 3 },
+    radius: 1,
+    color: { r: 255, g: 0, b: 0 },
+    specular: 500,
+  },
+  {
+    center: { x: -1.5, y: 0.5, z: 3 },
+    radius: 1,
+    color: { r: 255, g: 255, b: 255 },
+    specular: 500,
+    reflective: 0.9,
+  },
+  {
+    center: { x: 1.5, y: 1, z: 3 },
+    radius: 1,
+    color: { r: 0, g: 255, b: 0 },
+    specular: 800,
+  },
+];
+```
+
+---
+
+## `lightData` Format
+
+There are 3 types of supported lights:
+
+### Ambient Light
+
+```js
+{
+  type: "ambient",
+  intensity: 0.2, // Value between 0 and 1
+}
+```
+
+- Applies uniform brightness to the entire scene.
+
+### Point Light
+
+```js
+{
+  type: "point",
+  intensity: 0.6,
+  position: { x: 2, y: 1, z: 0 }
+}
+```
+
+- Emits light from a specific position like a bulb.
+
+### Directional Light
+
+```js
+{
+  type: "directional",
+  intensity: 0.2,
+  direction: { x: 1, y: 4, z: 4 }
+}
+```
+
+- Simulates light from a distant source like the sun.
+
+---
+
+For more details about the ray tracing algorithm, see the theoretical notes below and [source code](./src).
 
 ## Raytracing Algo
 
@@ -216,8 +298,5 @@ Right now, all of this happens on the main thread — and since every pixel may 
 
 🔄 Next Up
 
-- Experiment further with performance
-- Refactor core logic for clarity and scalability
-- Add TypeScript declaration files for typed usage
-- Write clean docs so this can be used in other projects
-- Build a lightweight raytracer NPM package
+- Experiment more with performance
+- Add more shapes and planes
