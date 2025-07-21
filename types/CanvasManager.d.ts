@@ -13,9 +13,7 @@ export declare class CanvasManager {
 
   showCanvas(): void;
 
-  render(): void;
-
-  putPixel(pixel: Pixel): void;
+  putPixel(pixel: Pixel[]): void;
 
   clearCanvas(): void;
 

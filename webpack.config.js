@@ -7,6 +7,7 @@ module.exports = {
     filename: "index.js",
     library: {
       type: "umd",
+      name: "raytrace-engine",
     },
   },
   module: {

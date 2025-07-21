@@ -8,7 +8,7 @@ import {
 export declare class RaytracingManager {
   constructor(props: RaytracingManagerProps);
 
-  startRaytracing(step?: number): Promise<void>;
+  start(step?: number): Promise<void>;
 
   cameraAngle: number;
   canvasHeight: number;

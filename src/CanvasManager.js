@@ -31,18 +31,19 @@ class CanvasManager {
     this.#imageData = this.#ctx.getImageData(0, 0, this.width, this.height);
   }
 
-  render() {
-    this.#ctx.putImageData(this.#imageData, 0, 0);
-  }
-
-  putPixel({ x, y, color }) {
-    let { x: px, y: py } = this.#mapCoordinates(x, y);
-    let { r, g, b } = color;
-    const index = (py * this.width + px) * 4;
-    this.#imageData.data[index] = r; // R
-    this.#imageData.data[index + 1] = g; // G
-    this.#imageData.data[index + 2] = b; // B
-    this.#imageData.data[index + 3] = 255; // A (opacity)
+  putPixel(listOfPixels) {
+    for (let { x, y, color } of listOfPixels) {
+      let { x: px, y: py } = this.#mapCoordinates(x, y);
+      let { r, g, b } = color;
+      const index = (py * this.width + px) * 4;
+      this.#imageData.data[index] = r; // R
+      this.#imageData.data[index + 1] = g; // G
+      this.#imageData.data[index + 2] = b; // B
+      this.#imageData.data[index + 3] = 255; // A (opacity)
+    }
+    if (listOfPixels.length) {
+      this.#ctx.putImageData(this.#imageData, 0, 0);
+    }
   }
 
   clearCanvas() {
@@ -63,10 +64,6 @@ class CanvasManager {
       x: this.width / 2 + x,
       y: this.height / 2 - y,
     };
-  }
-
-  #getCSSColorStringInRGBFormat({ r, g, b }) {
-    return `rgb(${r ?? 255},${g ?? 255},${b ?? 255})`;
   }
 }
 

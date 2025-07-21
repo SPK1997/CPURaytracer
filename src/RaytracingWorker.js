@@ -43,8 +43,8 @@ self.onmessage = (e) => {
     });
 
     return {
-      canvasPixelX: x,
-      canvasPixelY: y,
+      x: x,
+      y: y,
       color,
     };
   });

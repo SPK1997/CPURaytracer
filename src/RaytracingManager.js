@@ -3,6 +3,9 @@ import workerSource from "../dist/raytracingworker.bundle.js";
 class RaytracingManager {
   #viewportHeight;
   #viewportWidth;
+  #workers;
+  #pixelBuffer;
+  #pixelBufferOffset;
   constructor(props) {
     this.canvasHeight = props.canvasHeight;
     this.canvasWidth = props.canvasWidth;
@@ -27,35 +30,36 @@ class RaytracingManager {
       b: 0,
     };
     this.cameraAngle = 0;
+    this.#workers = null;
+    this.#pixelBuffer = [];
+    this.#pixelBufferOffset = (this.canvasHeight * this.canvasWidth) / 100;
   }
 
-  async startRaytracing(step = 1) {
-    const numCores = navigator.hardwareConcurrency || 4;
+  #spawnWorkers(numCores) {
     const blob = new Blob([workerSource], { type: "application/javascript" });
     const workerUrl = URL.createObjectURL(blob);
-    const workers = Array.from(
+    this.#workers = Array.from(
       { length: numCores },
       () =>
         new Worker(workerUrl, {
           type: "module",
         })
     );
+  }
 
-    const startX = -(this.canvasWidth / 2);
-    const endX = this.canvasWidth / 2;
-    const startY = -(this.canvasHeight / 2);
-    const endY = this.canvasHeight / 2;
+  #destroyWorkers() {
+    this.#workers.forEach((worker) => worker.terminate());
+    this.#workers = null;
+  }
+
+  async #startRaytracing(allPixels) {
+    const numCores = navigator.hardwareConcurrency || 4;
+    if (!this.#workers) {
+      this.#spawnWorkers(numCores);
+    }
 
     const ratioW = this.#viewportWidth / this.canvasWidth;
     const ratioH = this.#viewportHeight / this.canvasHeight;
-
-    // Collect all pixels
-    const allPixels = [];
-    for (let x = startX; x < endX; x += step) {
-      for (let y = startY; y < endY; y += step) {
-        allPixels.push({ x, y });
-      }
-    }
 
     // Divide pixels into chunks for each worker
     const chunkSize = Math.ceil(allPixels.length / numCores);
@@ -67,7 +71,7 @@ class RaytracingManager {
     const results = await Promise.all(
       pixelChunks.map((chunk, i) => {
         return new Promise((resolve, reject) => {
-          const worker = workers[i];
+          const worker = this.#workers[i];
           worker.onerror = (e) => reject(e);
           worker.onmessage = (e) => resolve(e.data);
           worker.postMessage({
@@ -90,15 +94,79 @@ class RaytracingManager {
 
     // Flatten and render pixels
     results.flat().forEach((pixelData) => {
-      this.putPixelCallback({
-        x: pixelData.canvasPixelX,
-        y: pixelData.canvasPixelY,
-        color: pixelData.color,
-      });
+      this.#pixelBuffer.push(pixelData);
+      let lengthOfPixelBuffer = this.#pixelBuffer.length;
+      if (lengthOfPixelBuffer >= this.#pixelBufferOffset) {
+        this.putPixelCallback(this.#pixelBuffer.slice(0, lengthOfPixelBuffer));
+        this.#pixelBuffer = this.#pixelBuffer.slice(lengthOfPixelBuffer);
+      }
     });
+  }
 
-    // Cleanup
-    workers.forEach((worker) => worker.terminate());
+  #getPixelsForPass(startX, endX, startY, endY, pixelOffsets, pass, step) {
+    const pixels = [];
+    const { x: xOffset, y: yOffset } = pixelOffsets[pass];
+    for (let x = startX; x < endX; x++) {
+      for (let y = startY; y < endY; y++) {
+        if (
+          (x - startX) % step === xOffset &&
+          (y - startY) % step === yOffset
+        ) {
+          pixels.push({ x, y });
+        }
+      }
+    }
+    return pixels;
+  }
+
+  #generatePixelOffsets(step) {
+    // Generate all offset combinations once
+    const pixelOffsets = [];
+    for (let y = 0; y < step; y++) {
+      for (let x = 0; x < step; x++) {
+        pixelOffsets.push({ x, y });
+      }
+    }
+    return pixelOffsets;
+  }
+
+  start(step = 10) {
+    this.#pixelBuffer = [];
+    return new Promise((resolve) => {
+      const startX = -(this.canvasWidth / 2);
+      const endX = this.canvasWidth / 2;
+      const startY = -(this.canvasHeight / 2);
+      const endY = this.canvasHeight / 2;
+
+      let currentPass = 0;
+      let totalPasses = step * step;
+      const passes = Array.from({ length: totalPasses }, (_, i) => i);
+      passes.sort(() => Math.random() - 0.5); // shuffle
+      const pixelOffsets = this.#generatePixelOffsets(step);
+      const _renderPass = async () => {
+        if (currentPass >= totalPasses) {
+          this.#destroyWorkers();
+          this.putPixelCallback(this.#pixelBuffer.slice(0));
+          resolve();
+          return;
+        }
+        const pass = passes[currentPass];
+        const pixels = this.#getPixelsForPass(
+          startX,
+          endX,
+          startY,
+          endY,
+          pixelOffsets,
+          pass,
+          step
+        );
+        await this.#startRaytracing(pixels);
+
+        currentPass++;
+        requestAnimationFrame(_renderPass);
+      };
+      _renderPass();
+    });
   }
 }
 
