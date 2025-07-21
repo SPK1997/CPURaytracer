@@ -8,7 +8,7 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 - ✅ Progressive loading is now integrated into the ray tracing engine.
 - ⚡ This makes the UI more responsive, giving users early visual feedback while rendering.
-- 🎥 [Watch a demo on YouTube](https://www.youtube.com/watch?v=zL2WcQBKGdU)
+- 🎥 [Watch this on YouTube](https://www.youtube.com/watch?v=zL2WcQBKGdU)
 
 ---
 
@@ -41,11 +41,11 @@ Contains the web worker logic which is the core ray tracing logic:
 
 To run the raytracer locally:
 
-1. Clone this repository.
-2. Built the project. Run the command `npm run build`
+1. Clone github repository.
+2. To build the project run command `npm run build`
 3. Open `index.html` in any modern browser.
 4. Watch the pixel-by-pixel ray tracing in action.
-5. Alternatively, the NPM package `'raytrace-engine'` can be installed and used.
+5. Alternatively, NPM package `'raytrace-engine'` can be installed and used.
 
 ---
 
