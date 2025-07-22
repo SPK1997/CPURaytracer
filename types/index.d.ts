@@ -12,12 +12,12 @@ import { RaytracingManager } from "./RaytracingManager";
 import { CanvasManager } from "./CanvasManager";
 
 // Dummy runtime values to allow non-type import
-export const Pixel: undefined = undefined;
-export const Vector3: undefined = undefined;
-export const Color: undefined = undefined;
-export const Matrix3x3: undefined = undefined;
-export const Light: undefined = undefined;
-export const Shape: undefined = undefined;
+export const Pixel: undefined;
+export const Vector3: undefined;
+export const Color: undefined;
+export const Matrix3x3: undefined;
+export const Light: undefined;
+export const Shape: undefined;
 export { RaytracingManager, CanvasManager };
 
 // Actual types
