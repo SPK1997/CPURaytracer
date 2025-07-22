@@ -3,6 +3,8 @@ import {
   Color,
   RaytracingManagerProps,
   Pixel,
+  Shape,
+  Light,
 } from "./TypesAndInterfaces";
 
 export declare class RaytracingManager {
@@ -17,7 +19,7 @@ export declare class RaytracingManager {
   cameraPosition: Vector3;
   reflectiveRecursionLimit: number;
   putPixelCallback?: (props: Pixel) => void;
-  shapeData: any[];
-  lightData: any[];
+  shapeData: Shape[];
+  lightData: Light[];
   noIntersectionColor: Color;
 }

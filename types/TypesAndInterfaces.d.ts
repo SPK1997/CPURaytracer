@@ -39,3 +39,32 @@ export interface CanvasManagerProps {
   height: number;
   width: number;
 }
+
+interface Sphere {
+  center: Vector3;
+  radius: number;
+  color: Color;
+  specular?: number;
+  reflective?: number;
+}
+
+export type Shape = Sphere;
+
+interface AmbientLight {
+  type: string;
+  intensity: number;
+}
+
+interface PointLight {
+  type: string;
+  intensity: number;
+  position: Vector3;
+}
+
+interface DirectionalLight {
+  type: string;
+  intensity: number;
+  direction: Vector3;
+}
+
+export type Light = AmbientLight | PointLight | DirectionalLight;

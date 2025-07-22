@@ -9,6 +9,9 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 - ✅ Progressive loading is now integrated into the ray tracing engine.
 - ⚡ This makes the UI more responsive, giving users early visual feedback while rendering.
 - 🎥 [Watch this on YouTube](https://www.youtube.com/watch?v=zL2WcQBKGdU)
+- TypeScript declaration files are added.
+
+![882 spheres rendering](readmeImages/current_progress.png)
 
 ---
 

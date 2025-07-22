@@ -13,7 +13,6 @@ self.onmessage = (e) => {
     ratioH,
     distanceFromCameraToViewport,
     recursionLimit,
-    cameraAngle,
   } = e.data;
 
   lightData = lData;
@@ -30,15 +29,11 @@ self.onmessage = (e) => {
       originVector
     );
 
-    let rotatedDirectionVector = mathServices.rotateVectorAroundYaxis(
-      directionVector,
-      cameraAngle
-    );
     const color = traceRay({
       tMin: tMin,
       tMax: tMax,
       originVector: originVector,
-      directionVector: rotatedDirectionVector,
+      directionVector: directionVector,
       recursionLimit: recursionLimit,
     });
 

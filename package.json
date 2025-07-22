@@ -6,8 +6,7 @@
   "sideEffects": false,
   "files": [
     "dist",
-    "types/index.d.ts",
-    "types/TypesAndInterfaces.d.ts"
+    "types"
   ],
   "repository": {
     "type": "git",

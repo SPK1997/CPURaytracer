@@ -19,18 +19,28 @@ class RaytracingManager {
     this.putPixelCallback =
       props.putPixelCallback ||
       function () {
-        console.warn("putPixelCallback is missing in RaytracingManager");
+        console.warn("putPixelCallback is not provided to Raytracing Manager");
       };
     this.shapeData =
       props.shapeData && props.shapeData.length ? props.shapeData : [];
+    if (!this.shapeData.length) {
+      console.warn("shapeData is not provided to Raytracing Manager");
+    }
     this.lightData =
       props.lightData && props.lightData.length ? props.lightData : [];
+    if (!this.lightData.length) {
+      console.warn("lightData is not provided to Raytracing Manager");
+    }
     this.noIntersectionColor = props.noIntersectionColor || {
       r: 0,
       g: 0,
       b: 0,
     };
-    this.cameraAngle = 0;
+    if (!props.noIntersectionColor) {
+      console.warn(
+        "noIntersectionColor is not provided to Raytracing Manager. Default Value of {r:0, g:0, b:0} is used"
+      );
+    }
     this.#workers = null;
     this.#pixelBuffer = [];
     this.#pixelBufferOffset = (this.canvasHeight * this.canvasWidth) / 100;
@@ -77,7 +87,6 @@ class RaytracingManager {
           worker.onerror = (e) => reject(e);
           worker.onmessage = (e) => resolve(e.data);
           worker.postMessage({
-            cameraAngle: this.cameraAngle,
             shapeData: this.shapeData,
             lightData: this.lightData,
             noIntersectionColor: this.noIntersectionColor,
