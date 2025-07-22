@@ -276,6 +276,7 @@ rm.start().then(() => {
   div.style.color = "white";
   (target as HTMLDivElement).append(div);
 });
+```
 
 ---
 
@@ -419,4 +420,3 @@ Right now, all of this happens on the main thread — and since every pixel may 
 
 - Experiment more with performance
 - Add more shapes and planes
-```
