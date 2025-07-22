@@ -46,8 +46,8 @@ Contains the web worker logic which is the core ray tracing logic:
 To run the raytracer locally:
 
 1. Clone github repository.
-2. To build the project run command `npm run build`
-3. Open `index.html` in any modern browser.
+2. To build the project run command `npm i` and then `npm run build`
+3. Serve `index.html` in any modern browser. If using VSCode try Live Server Extension.
 4. Watch the pixel-by-pixel ray tracing in action.
 5. Alternatively, NPM package `'raytrace-engine'` can be installed and used.
 
