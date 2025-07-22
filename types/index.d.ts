@@ -18,6 +18,8 @@ export const Color: undefined;
 export const Matrix3x3: undefined;
 export const Light: undefined;
 export const Shape: undefined;
+export const RaytracingManagerProps: undefined;
+export const CanvasManagerProps: undefined;
 export { RaytracingManager, CanvasManager };
 
 // Actual types
