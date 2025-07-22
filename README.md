@@ -164,6 +164,121 @@ There are 3 types of supported lights:
 
 ---
 
+## Understanding how to use types
+
+- The below example shows how to use the types provided with NPM package raytrace-engine.
+
+```js
+import {
+  CanvasManager,
+  RaytracingManager,
+  Pixel, // type
+  Light, // type
+  Shape, // type
+  CanvasManagerProps, // type
+  RaytracingManagerProps, // type
+} from "raytrace-engine";
+
+// Set canvas dimensions
+let canvasHeight = 720;
+let canvasWidth = 1080;
+
+// Camera setup
+let distanceFromCameraToViewport = 1;
+let cameraPosition = { x: 0, y: 0, z: 0 };
+
+// SHAPE DEFINITIONS
+let shapeData: Shape[] = [];
+
+/* Example scene with 3 spheres:
+           - Red sphere in the center
+           - White reflective sphere to the left
+           - Green shiny sphere to the right
+        */
+shapeData.push(
+  {
+    center: { x: 0, y: -1, z: 3 },
+    radius: 1,
+    color: { r: 255, g: 0, b: 0 }, // Red
+    specular: 500, // How shiny it is
+  },
+  {
+    center: { x: -1.5, y: 0.5, z: 3 },
+    radius: 1,
+    color: { r: 255, g: 255, b: 255 }, // White
+    specular: 500,
+    reflective: 0.9, // Very reflective
+  },
+  {
+    center: { x: 1.5, y: 1, z: 3 },
+    radius: 1,
+    color: { r: 0, g: 255, b: 0 }, // Green
+    specular: 800, // Very shiny
+  }
+);
+
+// LIGHT DEFINITIONS
+let lightData: Light[] = [
+  {
+    type: "ambient", // Applies uniformly to the whole scene
+    intensity: 0.2,
+  },
+  {
+    type: "point", // Emits light from a specific position in space
+    intensity: 0.6,
+    position: { x: 2, y: 1, z: 0 },
+  },
+  {
+    type: "directional", // Light with a direction but no position (like sunlight)
+    intensity: 0.2,
+    direction: { x: 1, y: 4, z: 4 },
+  },
+];
+
+// Create and display the canvas
+let cmOptions: CanvasManagerProps = {
+  target: document.getElementById("root") as HTMLDivElement,
+  height: canvasHeight,
+  width: canvasWidth,
+};
+let cm = new CanvasManager(cmOptions);
+cm.showCanvas();
+
+// Options passed to the raytracing engine
+let rmOptions: RaytracingManagerProps = {
+  canvasHeight: canvasHeight,
+  canvasWidth: canvasWidth,
+  cameraPosition: cameraPosition,
+  distanceFromCameraToViewport: distanceFromCameraToViewport,
+  shapeData: shapeData,
+  lightData: lightData,
+  noIntersectionColor: { r: 255, g: 255, b: 255 }, // Background color
+  reflectiveRecursionLimit: 3, // Max depth for recursive reflections
+  putPixelCallback: (pixelData: Pixel[]) => {
+    cm.putPixel(pixelData); // Draws pixels to the canvas
+  },
+};
+
+// Start rendering and measure how long it takes
+let t1 = window.performance.now();
+let rm = new RaytracingManager(rmOptions);
+rm.start().then(() => {
+  let t2 = window.performance.now();
+
+  // Display render time in top-left corner
+  let target = document.getElementById("root");
+  let div = document.createElement("div");
+  div.innerText = t2 - t1 + " " + "ms";
+  div.style.position = "absolute";
+  div.style.top = "0px";
+  div.style.left = "0px";
+  div.style.backgroundColor = "black";
+  div.style.color = "white";
+  (target as HTMLDivElement).append(div);
+});
+
+---
+
 For more details about the ray tracing algorithm, see the theoretical notes below and [source code](./src).
 
 ## Raytracing Algo
@@ -251,8 +366,8 @@ We calculate the reflected light intensity as follows:
 
 ![Cosine Curve](readmeImages/cosine_curve.png)
 
-When **a = 0 degrees** (perfect alignment), the intensity is **maximum**.  
-As **a increases toward 90 degrees**, intensity **drops rapidly**.  
+When **a = 0 degrees** (perfect alignment), the intensity is **maximum**.
+As **a increases toward 90 degrees**, intensity **drops rapidly**.
 Raising **cos(a)** to a high power compresses the reflection into a narrow beam — simulating a shiny surface.
 
 ### Working of Raytracing and Light
@@ -304,3 +419,4 @@ Right now, all of this happens on the main thread — and since every pixel may 
 
 - Experiment more with performance
 - Add more shapes and planes
+```
