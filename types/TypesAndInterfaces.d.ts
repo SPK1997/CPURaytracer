@@ -28,7 +28,7 @@ export interface RaytracingManagerProps {
   distanceFromCameraToViewport: number;
   cameraPosition: Vector3;
   reflectiveRecursionLimit?: number;
-  putPixelCallback?: (props: Pixel) => void;
+  putPixelCallback?: (props: Pixel[]) => void;
   shapeData?: any[];
   lightData?: any[];
   noIntersectionColor?: Color;
