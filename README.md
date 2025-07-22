@@ -10,6 +10,8 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 - ⚡ This makes the UI more responsive, giving users early visual feedback while rendering.
 - 🎥 [Watch this on YouTube](https://www.youtube.com/watch?v=zL2WcQBKGdU)
 - TypeScript declaration files are added.
+- NPM package is published.
+- [NPM package raytrace-engine](https://www.npmjs.com/package/raytrace-engine)
 
 ![882 spheres rendering](readmeImages/current_progress.png)
 
