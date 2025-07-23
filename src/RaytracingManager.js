@@ -7,6 +7,8 @@ class RaytracingManager {
   #pixelBuffer;
   #pixelBufferOffset;
   #progressiveRenderingStep;
+  #animationFrameId;
+  #cameraAngle;
   constructor(props) {
     this.canvasHeight = props.canvasHeight;
     this.canvasWidth = props.canvasWidth;
@@ -45,6 +47,8 @@ class RaytracingManager {
     this.#pixelBuffer = [];
     this.#pixelBufferOffset = (this.canvasHeight * this.canvasWidth) / 100;
     this.#progressiveRenderingStep = 10;
+    this.#animationFrameId = null;
+    this.#cameraAngle = 0;
   }
 
   #spawnWorkers(numCores) {
@@ -60,7 +64,9 @@ class RaytracingManager {
   }
 
   #destroyWorkers() {
-    this.#workers.forEach((worker) => worker.terminate());
+    if (this.#workers) {
+      this.#workers.forEach((worker) => worker.terminate());
+    }
     this.#workers = null;
   }
 
@@ -98,6 +104,7 @@ class RaytracingManager {
             ratioH,
             distanceFromCameraToViewport: this.distanceFromCameraToViewport,
             recursionLimit: this.reflectiveRecursionLimit,
+            cameraAngle: this.#cameraAngle,
           });
         });
       })
@@ -141,6 +148,12 @@ class RaytracingManager {
     return pixelOffsets;
   }
 
+  lookAt(angle) {
+    this.stop();
+    this.#cameraAngle += angle;
+    this.start();
+  }
+
   start() {
     this.#pixelBuffer = [];
     return new Promise((resolve) => {
@@ -177,10 +190,16 @@ class RaytracingManager {
         await this.#startRaytracing(pixels);
 
         currentPass++;
-        requestAnimationFrame(_renderPass);
+        this.#animationFrameId = requestAnimationFrame(_renderPass);
       };
       _renderPass();
     });
+  }
+
+  stop() {
+    window.cancelAnimationFrame(this.#animationFrameId);
+    this.#animationFrameId = null;
+    this.#destroyWorkers();
   }
 }
 

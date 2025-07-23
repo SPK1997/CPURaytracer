@@ -18,8 +18,8 @@
         const { CanvasManager, RaytracingManager } = window['raytrace-engine'];
 
         // Set canvas dimensions
-        let canvasHeight = 720;
-        let canvasWidth = 1080;
+        let canvasHeight = 400;
+        let canvasWidth = 400;
 
         // Camera setup
         let distanceFromCameraToViewport = 1;
@@ -54,29 +54,28 @@
                 specular: 800, // Very shiny
             });
 
-        /*
-        // OPTIONAL: Uncomment for a scene with 882 spheres arranged in a 3D grid
-        let gridSize = 10;
-        let spacing = 1.8;
 
-        for (let x = -gridSize; x <= gridSize; x++) {
-            for (let y = -gridSize; y <= gridSize; y++) {
-                for (let z = 0; z < 2; z++) {
-                    shapeData.push({
-                        center: { x: x * spacing, y: y * spacing, z: z * spacing + 3 },
-                        radius: 0.8,
-                        color: {
-                            r: Math.floor(Math.random() * 256),
-                            g: Math.floor(Math.random() * 256),
-                            b: Math.floor(Math.random() * 256),
-                        },
-                        specular: Math.floor(Math.random() * 1000),
-                        reflective: Math.random() * 0.5,
-                    });
-                }
-            }
-        }
-        */
+        // OPTIONAL: Uncomment for a scene with 882 spheres arranged in a 3D grid
+        // let gridSize = 10;
+        // let spacing = 1.8;
+
+        // for (let x = -gridSize; x <= gridSize; x++) {
+        //     for (let y = -gridSize; y <= gridSize; y++) {
+        //         for (let z = 0; z < 2; z++) {
+        //             shapeData.push({
+        //                 center: { x: x * spacing, y: y * spacing, z: z * spacing + 3 },
+        //                 radius: 0.8,
+        //                 color: {
+        //                     r: Math.floor(Math.random() * 256),
+        //                     g: Math.floor(Math.random() * 256),
+        //                     b: Math.floor(Math.random() * 256),
+        //                 },
+        //                 specular: Math.floor(Math.random() * 1000),
+        //                 reflective: Math.random() * 0.5,
+        //             });
+        //         }
+        //     }
+        // }
 
         // LIGHT DEFINITIONS
         let lightData = [
@@ -103,6 +102,46 @@
             width: canvasWidth,
         });
         cm.showCanvas();
+
+        // throttle the pointer move event handler calls
+        function throttle(fn, delay = 50) {
+            let lastCall = 0;
+            return (...args) => {
+                const now = Date.now();
+                if (now - lastCall >= delay) {
+                    lastCall = now;
+                    fn(...args);
+                }
+            };
+        }
+
+        // adding mouse movements to the canvas in order to change camera angle 
+        let prevClientX = null;
+        cm.enableMouseMovements({
+            pointerdown: (e) => {
+                prevClientX = e.clientX;
+            },
+            pointermove: throttle((e) => {
+                if (prevClientX === null) {
+                    return;
+                }
+                const currentX = e.clientX;
+                const diff = currentX - prevClientX;
+                prevClientX = currentX;
+
+                // Left swipe → diff < 0 → rotate left
+                // Right swipe → diff > 0 → rotate right
+                const angle = diff * 0.001;
+                console.log(angle);
+
+                rm.lookAt(angle);
+            }, 16),
+            pointerup: (e) => {
+                prevClientX = null;
+            }
+        });
+
+
 
         // Options passed to the raytracing engine
         let iOptions = {

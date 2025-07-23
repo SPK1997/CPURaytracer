@@ -2,6 +2,7 @@ class CanvasManager {
   #ctx;
   #canvas;
   #imageData;
+  #abortController;
   constructor({ target, height, width }) {
     this.#canvas = null;
     this.#ctx = null;
@@ -9,6 +10,7 @@ class CanvasManager {
     this.width = width;
     this.target = target;
     this.#imageData = null;
+    this.#abortController = null;
   }
 
   changeDimensions(height, width) {
@@ -29,6 +31,45 @@ class CanvasManager {
     this.#canvas.style.height = this.height + "px";
     this.#canvas.style.width = this.width + "px";
     this.#imageData = this.#ctx.getImageData(0, 0, this.width, this.height);
+  }
+
+  enableMouseMovements(props) {
+    if (!this.#canvas) {
+      return;
+    }
+    this.#abortController = new AbortController();
+    this.#canvas.addEventListener(
+      "pointerdown",
+      (e) => {
+        props.pointerdown(e);
+      },
+      {
+        signal: this.#abortController.signal,
+      }
+    );
+    this.#canvas.addEventListener(
+      "pointermove",
+      (e) => {
+        props.pointermove(e);
+      },
+      {
+        signal: this.#abortController.signal,
+      }
+    );
+    this.#canvas.addEventListener(
+      "pointerup",
+      (e) => {
+        props.pointerup(e);
+      },
+      {
+        signal: this.#abortController.signal,
+      }
+    );
+  }
+
+  disableMouseMovements() {
+    this.#abortController.abort();
+    this.#abortController = null;
   }
 
   putPixel(listOfPixels) {
@@ -55,6 +96,7 @@ class CanvasManager {
   destroyCanvas() {
     if (this.#canvas) {
       this.#canvas.remove();
+      this.disableMouseMovements();
     }
     this.#canvas = null;
   }

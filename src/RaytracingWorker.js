@@ -13,6 +13,7 @@ self.onmessage = (e) => {
     ratioH,
     distanceFromCameraToViewport,
     recursionLimit,
+    cameraAngle,
   } = e.data;
 
   lightData = lData;
@@ -20,7 +21,7 @@ self.onmessage = (e) => {
   shapeData = sData;
 
   const result = pixels.map(({ x, y }) => {
-    const directionVector = mathServices.subtractVectors(
+    let directionVector = mathServices.subtractVectors(
       {
         x: x * ratioW,
         y: y * ratioH,
@@ -28,6 +29,13 @@ self.onmessage = (e) => {
       },
       originVector
     );
+
+    if (cameraAngle !== 0) {
+      directionVector = mathServices.rotateVectorAroundYaxis(
+        directionVector,
+        cameraAngle
+      );
+    }
 
     const color = traceRay({
       tMin: tMin,
