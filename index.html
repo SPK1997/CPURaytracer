@@ -115,9 +115,11 @@
             };
         }
 
-        // adding mouse movements to the canvas in order to change camera angle 
+        // Adding pointer movements to the canvas in order to change camera angle 
+        // This will use pointe events which will be useful for Touch devices also
+        // Pointer movements can be disabled. Use disablePointerMovements() method on Canvas Manager instance.
         let prevClientX = null;
-        cm.enableMouseMovements({
+        cm.enablePointerMovements({
             pointerdown: (e) => {
                 prevClientX = e.clientX;
             },
@@ -132,8 +134,10 @@
                 // Left swipe → diff < 0 → rotate left
                 // Right swipe → diff > 0 → rotate right
                 const angle = diff * 0.001;
-                console.log(angle);
 
+                // Initially the camera is positioned at {x:0, y:0, z:0} and looks at +ve Z direction into the screen
+                // A -ve angle will make the camera look left
+                // A +ve angle will make the camera look right
                 rm.lookAt(angle);
             }, 16),
             pointerup: (e) => {
