@@ -33,7 +33,7 @@ class CanvasManager {
     this.#imageData = this.#ctx.getImageData(0, 0, this.width, this.height);
   }
 
-  enableMouseMovements(props) {
+  enablePointerMovements(props) {
     if (!this.#canvas) {
       return;
     }
@@ -67,7 +67,7 @@ class CanvasManager {
     );
   }
 
-  disableMouseMovements() {
+  disablePointerMovements() {
     this.#abortController.abort();
     this.#abortController = null;
   }
