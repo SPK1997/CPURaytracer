@@ -22,4 +22,5 @@ export declare class RaytracingManager {
   shapeData: Shape[];
   lightData: Light[];
   noIntersectionColor: Color;
+  lookAt(angle: number): void;
 }
