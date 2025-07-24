@@ -34,6 +34,10 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 - More degrees of freedom for camera (pitch/X-axis, roll/Z-axis)
 - More shapes: Triangles, Planes, etc.
 
+📦 NPM Package
+
+https://www.npmjs.com/package/raytrace-engine
+
 ![882 spheres rendering](readmeImages/current_progress.png)
 
 ---
