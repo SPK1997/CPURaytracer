@@ -12,7 +12,7 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 - Check index.html file on Github repo for example code.
 - Pixel buffer integration — huge improvement in camera movement smoothness
 - Progressive rendering + buffer: paint only after ~1% of pixels are ready → keeps the main thread responsive
-- 🎥 [Watch this on YouTube](https://youtu.be/b1Qhd_gh1zU) — See how camera movement becomes noticeably smoother with pixel buffer vs. without it
+- 🎥 [Watch this on YouTube](https://youtu.be/b1Qhd_gh1zU) — See how camera movement becomes noticeably smoother with pixel buffer vs. without it. It is a work in progress!
 
 ✅ How it works?
 
@@ -20,7 +20,7 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ✅ Features so far:
 
-- Ray-object intersections
+- Ray-object intersections (sphere for now)
 - Diffuse reflection (matte surfaces)
 - Specular reflection (shiny surfaces)
 - Shadows
