@@ -6,13 +6,31 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 
 ## Current Progress
 
-- ✅ Progressive loading is now integrated into the ray tracing engine.
-- ⚡ This makes the UI more responsive, giving users early visual feedback while rendering.
-- 🎥 [Watch this on YouTube](https://www.youtube.com/watch?v=zL2WcQBKGdU)
-- TypeScript declaration files are added.
-- [NPM package raytrace-engine](https://www.npmjs.com/package/raytrace-engine) is published.
+✅ New features:
+
+- Pointer-controlled camera rotation around the Y-axis. Turns the camera left or right (like shaking your head "no").
+- Check index.html file on Github repo for example code.
+- Pixel buffer integration — huge improvement in camera movement smoothness
+- Progressive rendering + buffer: paint only after ~1% of pixels are ready → keeps the main thread responsive
+- 🎥 [Watch this on YouTube](https://youtu.be/b1Qhd_gh1zU) — See how camera movement becomes noticeably smoother with pixel buffer vs. without it
+
+✅ Features so far:
+
+- Ray-object intersections
+- Diffuse reflection (matte surfaces)
+- Specular reflection (shiny surfaces)
+- Shadows
+- Multithreading
+- Progressive rendering
+- Camera rotation (along +ve Y axis)
 
 ![882 spheres rendering](readmeImages/current_progress.png)
+
+🔄 Next Up
+
+- More performace boosts and smoother camera movements
+- More degrees of freedom for camera (pitch/X-axis, roll/Z-axis)
+- More shapes: Triangles, Planes, etc.
 
 ---
 
@@ -257,7 +275,7 @@ function throttle(fn, delay = 50) {
   };
 }
 
-// Adding pointer movements to the canvas in order to change camera angle 
+// Adding pointer movements to the canvas in order to change camera angle
 // This will use pointe events which will be useful for Touch devices also
 // Pointer movements can be disabled. Use disablePointerMovements() method on Canvas Manager instance.
 let prevClientX = null;
@@ -270,11 +288,11 @@ let enablePointerMovementsOptions:EnablePointerMovementsProps = {
       const currentX = e.clientX;
       const diff = currentX - prevClientX;
       prevClientX = currentX;
-  
+
       // Left swipe → diff < 0 → rotate left
       // Right swipe → diff > 0 → rotate right
       const angle = diff * 0.001;
-  
+
       // Initially the camera is positioned at {x:0, y:0, z:0} and looks at +ve Z direction into the screen
       // A -ve angle will make the camera look left
       // A +ve angle will make the camera look right
@@ -456,10 +474,3 @@ Right now, all of this happens on the main thread — and since every pixel may 
 - No WebGL, no Three.js, no shaders — just math and canvas
 
 ---
-
-## Planned Work
-
-🔄 Next Up
-
-- Experiment more with performance
-- Add more shapes and planes

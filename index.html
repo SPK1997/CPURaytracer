@@ -136,8 +136,8 @@
                 const angle = diff * 0.001;
 
                 // Initially the camera is positioned at {x:0, y:0, z:0} and looks at +ve Z direction into the screen
-                // A -ve angle will make the camera look left
-                // A +ve angle will make the camera look right
+                // A -ve angle will make the camera look left/rotate the camera anticlockwise along +ve Y axis
+                // A +ve angle will make the camera look right/rotate the camera clockwise along +ve Y axis
                 rm.lookAt(angle);
             }, 16),
             pointerup: (e) => {
