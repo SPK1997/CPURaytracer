@@ -68,3 +68,9 @@ interface DirectionalLight {
 }
 
 export type Light = AmbientLight | PointLight | DirectionalLight;
+
+export interface PointerMovementsEventHandler {
+  pointerdown: (e: PointerEvent) => void,
+  pointerup: (e: PointerEvent) => void,
+  pointermove: (e: PointerEvent) => void
+}
