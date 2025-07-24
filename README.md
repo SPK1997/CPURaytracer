@@ -24,13 +24,13 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 - Progressive rendering
 - Camera rotation (along +ve Y axis)
 
-![882 spheres rendering](readmeImages/current_progress.png)
-
 🔄 Next Up
 
 - More performace boosts and smoother camera movements
 - More degrees of freedom for camera (pitch/X-axis, roll/Z-axis)
 - More shapes: Triangles, Planes, etc.
+
+![882 spheres rendering](readmeImages/current_progress.png)
 
 ---
 
