@@ -1,4 +1,4 @@
-import { Pixel, CanvasManagerProps } from "./TypesAndInterfaces";
+import { Pixel, CanvasManagerProps, PointerMovementsEventHandler } from "./TypesAndInterfaces";
 
 export declare class CanvasManager {
   constructor(params: CanvasManagerProps);
@@ -18,4 +18,8 @@ export declare class CanvasManager {
   clearCanvas(): void;
 
   destroyCanvas(): void;
+
+  disablePointerMovements(): void;
+
+  enablePointerMovements(props: PointerMovementsEventHandler): void;
 }
