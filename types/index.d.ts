@@ -7,6 +7,7 @@ import {
   Matrix3x3 as _Matrix3x3,
   Light as _Light,
   Shape as _Shape,
+  PointerMovementsEventHandler as _PointerMovementsEventHandler
 } from "./TypesAndInterfaces";
 import { RaytracingManager } from "./RaytracingManager";
 import { CanvasManager } from "./CanvasManager";
@@ -20,6 +21,7 @@ export const Light: undefined;
 export const Shape: undefined;
 export const RaytracingManagerProps: undefined;
 export const CanvasManagerProps: undefined;
+export const EnablePointerMovementsProps: undefined
 export { RaytracingManager, CanvasManager };
 
 // Actual types
@@ -31,3 +33,4 @@ export type CanvasManagerProps = _CanvasManagerProps;
 export type Matrix3x3 = _Matrix3x3;
 export type Light = _Light;
 export type Shape = _Shape;
+export type EnablePointerMovementsProps = _PointerMovementsEventHandler;
