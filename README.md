@@ -14,6 +14,10 @@ A simple CPU-based ray tracer written in **vanilla JavaScript**, rendering direc
 - Progressive rendering + buffer: paint only after ~1% of pixels are ready → keeps the main thread responsive
 - 🎥 [Watch this on YouTube](https://youtu.be/b1Qhd_gh1zU) — See how camera movement becomes noticeably smoother with pixel buffer vs. without it
 
+✅ How it works?
+
+- check the [Camera rotation](https://github.com/SPK1997/CPURaytracer#camera-rotation) section
+
 ✅ Features so far:
 
 - Ray-object intersections
@@ -465,6 +469,14 @@ This new ray continues the same process: it might hit something else, reflect ag
 
 Limitation
 Right now, all of this happens on the main thread — and since every pixel may involve multiple recursive rays, the UI can freeze. Using Web Workers to offload this heavy computation can make rendering much smoother and faster.
+
+---
+
+## Camera rotation
+
+Currently it is possible to rotate camera along +ve Y-axis/Yaw
+
+In raytracing the idea is to cast a ray from camera into the scene and compute intersections. Therefore on camera rotation the direction vector of the ray changes. Which is calculated by transforming the vector with a rotation matrix.
 
 ---
 
