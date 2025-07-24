@@ -177,6 +177,7 @@ import {
   Shape, // type
   CanvasManagerProps, // type
   RaytracingManagerProps, // type
+  EnablePointerMovementsProps, // type
 } from "raytrace-engine";
 
 // Set canvas dimensions
@@ -243,6 +244,48 @@ let cmOptions: CanvasManagerProps = {
 };
 let cm = new CanvasManager(cmOptions);
 cm.showCanvas();
+
+// throttle the pointer move event handler calls
+function throttle(fn, delay = 50) {
+  let lastCall = 0;
+  return (...args) => {
+    const now = Date.now();
+    if (now - lastCall >= delay) {
+      lastCall = now;
+      fn(...args);
+    }
+  };
+}
+
+// Adding pointer movements to the canvas in order to change camera angle 
+// This will use pointe events which will be useful for Touch devices also
+// Pointer movements can be disabled. Use disablePointerMovements() method on Canvas Manager instance.
+let prevClientX = null;
+let enablePointerMovementsOptions:EnablePointerMovementsProps = {
+  pointerdown: (e) => {
+    prevClientX = e.clientX;
+  },
+  pointermove: throttle((e) => {
+    if (prevClientX !== null) {
+      const currentX = e.clientX;
+      const diff = currentX - prevClientX;
+      prevClientX = currentX;
+  
+      // Left swipe → diff < 0 → rotate left
+      // Right swipe → diff > 0 → rotate right
+      const angle = diff * 0.001;
+  
+      // Initially the camera is positioned at {x:0, y:0, z:0} and looks at +ve Z direction into the screen
+      // A -ve angle will make the camera look left
+      // A +ve angle will make the camera look right
+      rm.lookAt(angle);
+    }
+  }, 16),
+  pointerup: (e) => {
+    prevClientX = null;
+  }
+};
+cm.enablePointerMovements();
 
 // Options passed to the raytracing engine
 let rmOptions: RaytracingManagerProps = {
